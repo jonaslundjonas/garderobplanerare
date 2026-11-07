@@ -1,0 +1,2077 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Platsbyggd Garderob med Spegelskjutdörrar - 3D & Ritningar</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Three.js för 3D visualisering -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <!-- jsPDF för PDF-export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    .font-mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .blueprint-grid {
+      background-size: 20px 20px;
+      background-image: 
+        linear-gradient(to right, rgba(56, 189, 248, 0.07) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(56, 189, 248, 0.07) 1px, transparent 1px);
+    }
+    input[type=range] {
+      accent-color: #6366f1;
+    }
+    canvas {
+      outline: none;
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col">
+
+  <!-- Header -->
+  <header class="bg-slate-900/90 border-b border-slate-800 backdrop-blur sticky top-0 z-30 px-3 py-2.5 sm:px-6">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center space-x-3">
+        <div class="bg-indigo-600 text-white p-2 rounded-xl shadow-lg shadow-indigo-600/30">
+          <i class="fa-solid fa-ruler-combined text-lg"></i>
+        </div>
+        <div>
+          <h1 class="text-base sm:text-lg font-bold tracking-tight text-white flex items-center gap-2">
+            Platsbyggd Nischgarderob
+            <span id="headerDimBadge" class="text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+              135 × 250 × 56.5 cm
+            </span>
+          </h1>
+          <p class="text-[11px] text-slate-400">Flyttbara sektioner | Spegeldörrar | CAD & Kaplista</p>
+        </div>
+      </div>
+
+      <!-- Projekt Spara / Ladda & Export -->
+      <div class="flex items-center flex-wrap gap-2">
+        <!-- Ladda fil (dold input) -->
+        <input type="file" id="fileInput" accept=".lu3d,.json" class="hidden">
+        
+        <button id="btnLoadJson" class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium px-3 py-1.5 rounded-xl border border-slate-700 flex items-center gap-1.5 transition">
+          <i class="fa-solid fa-folder-open text-amber-400"></i>
+          <span>Ladda fil</span>
+        </button>
+
+        <button id="btnSaveJson" class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium px-3 py-1.5 rounded-xl border border-slate-700 flex items-center gap-1.5 transition">
+          <i class="fa-solid fa-floppy-disk text-indigo-400"></i>
+          <span>Spara fil (.lu3d)</span>
+        </button>
+
+        <!-- Nav tabs -->
+        <div class="bg-slate-900 p-0.5 rounded-xl border border-slate-800 flex text-xs font-medium">
+          <button id="tab3dBtn" class="px-2.5 py-1.5 rounded-lg bg-indigo-600 text-white transition shadow">
+            <i class="fa-solid fa-cube mr-1"></i>3D
+          </button>
+          <button id="tab2dBtn" class="px-2.5 py-1.5 rounded-lg text-slate-400 hover:text-white transition">
+            <i class="fa-solid fa-compass-drafting mr-1"></i>CAD
+          </button>
+          <button id="tabCutBtn" class="px-2.5 py-1.5 rounded-lg text-slate-400 hover:text-white transition">
+            <i class="fa-solid fa-table-list mr-1"></i>Kaplista
+          </button>
+        </div>
+
+        <button id="downloadPdfBtn" class="bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white text-xs font-semibold px-3 py-1.5 rounded-xl flex items-center gap-1.5 shadow-lg shadow-emerald-900/30 transition">
+          <i class="fa-solid fa-file-pdf"></i>
+          <span class="hidden sm:inline">Ladda ner</span> PDF
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Huvudinnehåll -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-5 flex flex-col gap-5">
+
+    <!-- 1. FLIK: 3D MODELL OCH JUSTERINGSPANEL -->
+    <div id="view3d" class="flex flex-col lg:flex-row gap-5">
+      
+      <!-- 3D Canvas Behållare (Definierad höjd så den syns omedelbart vid start) -->
+      <div class="relative flex-1 bg-slate-900 rounded-2xl border border-slate-800 overflow-hidden shadow-2xl h-[520px] sm:h-[600px] lg:h-[700px]">
+        
+        <!-- 3D Canvas -->
+        <div id="canvasContainer" class="w-full h-full cursor-grab active:cursor-grabbing"></div>
+
+        <!-- 3D Dörrkontroller Uppe till Vänster -->
+        <div class="absolute top-3 left-3 z-10 flex flex-wrap gap-1.5">
+          <div class="bg-slate-900/90 backdrop-blur border border-slate-700 rounded-xl p-1 shadow-xl flex items-center gap-1 text-xs">
+            <!-- Interaktivt Redigeringsläge Toggle -->
+            <button id="btnToggleEditMode" title="Aktivera redigeringsläge för att flytta sektioner direkt i 3D" class="px-2.5 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-semibold transition flex items-center gap-1.5 shadow">
+              <i class="fa-solid fa-pen-ruler"></i>
+              <span id="editModeBtnText">Redigera i 3D: AV</span>
+            </button>
+            <div class="w-px h-5 bg-slate-700 my-0.5 mx-0.5"></div>
+            <button id="btnDoorClosed" title="Stäng spegeldörrarna" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-white transition">
+              <i class="fa-solid fa-door-closed mr-1"></i>Stängda
+            </button>
+            <button id="btnDoorLeft" title="Öppna vänster dörr" class="px-2.5 py-1 rounded-lg bg-indigo-600/30 hover:bg-indigo-600/50 text-indigo-300 transition">
+              <i class="fa-solid fa-arrow-right mr-1"></i>Skjut Vänster
+            </button>
+            <button id="btnDoorRight" title="Öppna höger dörr" class="px-2.5 py-1 rounded-lg bg-indigo-600/30 hover:bg-indigo-600/50 text-indigo-300 transition">
+              <i class="fa-solid fa-arrow-left mr-1"></i>Skjut Höger
+            </button>
+            <button id="btnDoorHide" title="Dölj dörrar för att se inredningen" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-amber-300 transition">
+              <i class="fa-solid fa-eye-slash mr-1"></i>Dölj Dörrar
+            </button>
+          </div>
+        </div>
+
+        <!-- Edit Mode Banner & Guide -->
+        <div id="editModeBanner" class="hidden absolute top-14 left-1/2 transform -translate-x-1/2 z-10 bg-indigo-950/90 backdrop-blur-md border border-indigo-500/60 text-white px-4 py-1.5 rounded-full shadow-2xl flex items-center gap-2 text-xs pointer-events-none">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+          <span class="font-medium text-emerald-300">Redigeringsläge:</span>
+          <span class="text-slate-200">Dra i handtagen (↔️ / ↕️) i 3D eller klicka på en sektion</span>
+        </div>
+
+        <!-- Flytande 3D Snabbinspektor i Edit Mode -->
+        <div id="editModeInspector" class="hidden absolute bottom-12 left-3 z-20 bg-slate-900/95 backdrop-blur border border-indigo-500/50 rounded-2xl p-3 shadow-2xl max-w-xs w-full text-xs">
+          <div class="flex items-center justify-between pb-2 mb-2 border-b border-slate-800">
+            <div class="flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+              <span id="inspectorTitle" class="font-bold text-white uppercase text-[11px] tracking-wider">Skiljevägg Vald</span>
+            </div>
+            <span class="text-[10px] font-mono text-indigo-400 bg-indigo-500/10 px-2 py-0.5 rounded border border-indigo-500/20">3D Live</span>
+          </div>
+          <div id="inspectorBody" class="space-y-2">
+            <!-- Innehåll uppdateras dynamiskt i JavaScript -->
+          </div>
+        </div>
+
+        <!-- Funktionsknappar Uppe till Höger -->
+        <div class="absolute top-3 right-3 z-10 flex flex-col gap-1.5">
+          <button id="btnToggleSectionDims" class="bg-slate-900/90 backdrop-blur border border-slate-700 px-2.5 py-1.5 rounded-xl text-emerald-400 hover:bg-slate-800 shadow text-xs font-medium flex items-center gap-1.5" title="Växla sektionsmått (B×H×D)">
+            <i class="fa-solid fa-shapes"></i>
+            <span class="hidden sm:inline">Mått (B×H×D)</span>
+          </button>
+          <button id="btnToggleDims" class="bg-slate-900/90 backdrop-blur border border-slate-700 px-2.5 py-1.5 rounded-xl text-sky-400 hover:bg-slate-800 shadow text-xs font-medium flex items-center gap-1.5" title="Växla yttermått">
+            <i class="fa-solid fa-ruler-combined"></i>
+            <span class="hidden sm:inline">Yttermått</span>
+          </button>
+          <button id="btnToggleLight" class="bg-slate-900/90 backdrop-blur border border-slate-700 px-2.5 py-1.5 rounded-xl text-yellow-300 hover:bg-slate-800 shadow text-xs font-medium flex items-center gap-1.5" title="Tänd/släck sensor-LED">
+            <i class="fa-solid fa-lightbulb"></i>
+            <span class="hidden sm:inline">LED-ljus</span>
+          </button>
+          <button id="btnResetCamera" class="bg-slate-900/90 backdrop-blur border border-slate-700 px-2.5 py-1.5 rounded-xl text-slate-300 hover:bg-slate-800 shadow text-xs font-medium flex items-center gap-1.5" title="Återställ kameravy">
+            <i class="fa-solid fa-camera-rotate"></i>
+            <span class="hidden sm:inline">Centrera</span>
+          </button>
+        </div>
+
+        <!-- Fotnot i 3D-vy -->
+        <div class="absolute bottom-3 left-3 right-3 pointer-events-none flex justify-between items-end text-[11px] text-slate-400">
+          <div class="bg-slate-900/90 backdrop-blur px-3 py-1.5 rounded-xl border border-slate-800 pointer-events-auto shadow">
+            <i class="fa-solid fa-hand-pointer mr-1 text-indigo-400"></i> Rotera med mus/finger | Scrolla för zoom
+          </div>
+          <div class="bg-slate-900/90 backdrop-blur px-3 py-1.5 rounded-xl border border-slate-800 pointer-events-auto shadow flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-sky-400 animate-pulse"></span>
+            <span class="text-slate-300 font-mono">Reflekterande spegeldörrar | Inga svarta fötter</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Höger: FLYTTBARA SEKTIONER (KONTROLLER & BERÄKNINGAR) -->
+      <div class="w-full lg:w-[420px] flex flex-col gap-4">
+        
+        <!-- Interaktiva Sektionsreglage -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl">
+          <div class="flex items-center justify-between mb-3 border-b border-slate-800 pb-2">
+            <h2 class="text-xs font-bold uppercase tracking-wider text-indigo-400 flex items-center gap-1.5">
+              <i class="fa-solid fa-sliders text-indigo-400"></i>
+              Flytta & Anpassa Sektioner
+            </h2>
+            <button id="btnResetDefaults" class="text-[10px] text-slate-400 hover:text-white px-2 py-0.5 rounded bg-slate-800 border border-slate-700 transition">
+              Återställ original
+            </button>
+          </div>
+
+          <div class="space-y-3.5 text-xs">
+            
+            <!-- 1. Bredd-fördelning (Skiljevägg flyttbar) -->
+            <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
+              <div class="flex justify-between items-center mb-1">
+                <label class="font-semibold text-slate-200 flex items-center gap-1">
+                  <i class="fa-solid fa-arrows-left-right text-emerald-400"></i>
+                  Skiljevägg / Bredd Hängdel:
+                </label>
+                <div class="flex items-center gap-1">
+                  <input type="number" id="numMainWidth" min="70" max="122" step="1" value="112" class="w-14 bg-slate-900 border border-slate-700 rounded px-1.5 py-0.5 font-mono text-emerald-400 font-bold text-xs text-right focus:border-emerald-500 focus:outline-none">
+                  <span class="text-[11px] text-slate-400">cm</span>
+                </div>
+              </div>
+              <input type="range" id="sliderMainWidth" min="70" max="122" step="1" value="112" class="w-full h-1.5 bg-slate-800 rounded-lg cursor-pointer">
+              <div class="flex justify-between text-[10px] text-slate-400 font-mono mt-1">
+                <span>Hängdel: <strong id="valMainWSub" class="text-emerald-400">112 cm</strong></span>
+                <span>Skotorn (höger): <strong id="valTowerWSub" class="text-amber-400">23 cm</strong></span>
+              </div>
+            </div>
+
+            <!-- 2. Höjd Toppsektion (Hatthyllor) -->
+            <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
+              <div class="flex justify-between items-center mb-1">
+                <label class="font-semibold text-slate-200 flex items-center gap-1">
+                  <i class="fa-solid fa-arrows-up-down text-indigo-400"></i>
+                  Toppsektion (Hatthyllor):
+                </label>
+                <div class="flex items-center gap-1">
+                  <input type="number" id="numTopHeight" min="35" max="100" step="1" value="75" class="w-14 bg-slate-900 border border-slate-700 rounded px-1.5 py-0.5 font-mono text-indigo-400 font-bold text-xs text-right focus:border-indigo-500 focus:outline-none">
+                  <span class="text-[11px] text-slate-400">cm</span>
+                </div>
+              </div>
+              <input type="range" id="sliderTopHeight" min="35" max="100" step="1" value="75" class="w-full h-1.5 bg-slate-800 rounded-lg cursor-pointer">
+              <div class="flex justify-between items-center text-[10px] text-slate-400 mt-1.5">
+                <span>Antal hatthyllplan:</span>
+                <select id="selectTopShelves" class="bg-slate-900 border border-slate-700 text-white rounded px-2 py-0.5 font-mono text-[11px]">
+                  <option value="2">2 hyllor</option>
+                  <option value="3" selected>3 hyllor (original)</option>
+                  <option value="4">4 hyllor</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- 3. Höjd Bottensektion (Skoförvaring) -->
+            <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
+              <div class="flex justify-between items-center mb-1">
+                <label class="font-semibold text-slate-200 flex items-center gap-1">
+                  <i class="fa-solid fa-arrows-up-down text-rose-400"></i>
+                  Bottensektion (Skor från golv):
+                </label>
+                <div class="flex items-center gap-1">
+                  <input type="number" id="numBottomHeight" min="20" max="60" step="1" value="35" class="w-14 bg-slate-900 border border-slate-700 rounded px-1.5 py-0.5 font-mono text-rose-400 font-bold text-xs text-right focus:border-rose-500 focus:outline-none">
+                  <span class="text-[11px] text-slate-400">cm</span>
+                </div>
+              </div>
+              <input type="range" id="sliderBottomHeight" min="20" max="60" step="1" value="35" class="w-full h-1.5 bg-slate-800 rounded-lg cursor-pointer">
+              <div class="flex justify-between items-center text-[10px] text-slate-400 mt-1.5">
+                <span>Antal skohyllplan:</span>
+                <select id="selectShoeShelves" class="bg-slate-900 border border-slate-700 text-white rounded px-2 py-0.5 font-mono text-[11px]">
+                  <option value="1">1 hylla</option>
+                  <option value="2" selected>2 hyllor (original)</option>
+                  <option value="3">3 hyllor</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- 4. Resulterande Hängsektion & Skotorn -->
+            <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 flex justify-between items-center">
+              <div>
+                <span class="font-semibold text-slate-200 block">Kalkylerad Hänghöjd (Jackor):</span>
+                <span class="text-[10px] text-slate-400">Total 250 - Topp - Botten</span>
+              </div>
+              <div class="text-right font-mono">
+                <span id="valHangingHeight" class="text-base font-bold text-emerald-400">140 cm</span>
+                <span class="text-[10px] text-slate-500 block">Fri hänghöjd</span>
+              </div>
+            </div>
+
+            <!-- 5. Skotorn Fack & Djup -->
+            <div class="grid grid-cols-2 gap-2">
+              <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
+                <label class="text-[11px] text-slate-400 block mb-1">Hyllor i Skotorn:</label>
+                <select id="selectTowerShelves" class="w-full bg-slate-900 border border-slate-700 text-amber-300 rounded px-2 py-1 font-mono text-xs">
+                  <option value="4">4 hyllor</option>
+                  <option value="5">5 hyllor</option>
+                  <option value="6" selected>6 hyllor (original)</option>
+                  <option value="7">7 hyllor</option>
+                </select>
+              </div>
+              <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
+                <label class="text-[11px] text-slate-400 block mb-1">Totalt Nischdjup:</label>
+                <div class="flex items-center gap-1">
+                  <input type="number" id="inputDepth" min="45" max="75" step="0.5" value="56.5" class="w-full bg-slate-900 border border-slate-700 text-sky-400 rounded px-2 py-1 font-mono text-xs">
+                  <span class="text-xs text-slate-500">cm</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Dynamisk Lista: ALLA SEKTIONER MED BREDD (B), HÖJD (H), DJUP (D) -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl flex-1 flex flex-col">
+          <div class="flex items-center justify-between mb-2">
+            <h2 class="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
+              <i class="fa-solid fa-table-cells-large text-emerald-400"></i>
+              Kalkylerade Mått (B × H × D)
+            </h2>
+            <span class="text-[10px] font-mono text-slate-400 bg-slate-800 px-2 py-0.5 rounded border border-slate-700">
+              Live beräkning
+            </span>
+          </div>
+
+          <div id="sectionCardsContainer" class="space-y-2 text-xs overflow-y-auto max-h-[290px] pr-1">
+            <!-- Renderas dynamiskt i JavaScript med B, H, D -->
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- 2. FLIK: 2D CAD KONSTRUKTIONSRITNING (DYNAMISK SVG) -->
+    <div id="view2d" class="hidden flex-col gap-6">
+      <div class="bg-slate-950 border border-slate-800 rounded-2xl p-4 sm:p-6 shadow-2xl blueprint-grid">
+        <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800 pb-3 mb-4">
+          <div>
+            <span class="text-xs uppercase tracking-widest text-indigo-400 font-semibold">CAD Ritning & Måttkedjor</span>
+            <h2 class="text-base sm:text-lg font-bold text-white">Dynamisk Måttsatt Fasad- & Snittvy (B × H × D)</h2>
+          </div>
+          <div class="text-xs font-mono text-slate-400 bg-slate-900 px-3 py-1.5 rounded-lg border border-slate-800">
+            Skala 1:20 | Uppdateras live vid sektionsändring | Direkt mot golv
+          </div>
+        </div>
+
+        <!-- SVG CAD RITNING -->
+        <div class="w-full overflow-x-auto flex justify-center py-2">
+          <svg id="blueprintSvg" viewBox="0 0 950 1150" class="w-full max-w-[900px] bg-slate-950 border border-slate-800 rounded-xl shadow-inner font-mono text-slate-300">
+            <!-- Genereras dynamiskt via renderDynamicCadSvg() -->
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. FLIK: KAPLISTA & BESLAG (DYNAMISK) -->
+    <div id="viewCut" class="hidden flex-col gap-6">
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-6 shadow-xl">
+        <div class="flex flex-wrap items-center justify-between gap-4 mb-4 border-b border-slate-800 pb-3">
+          <div>
+            <h2 class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
+              <i class="fa-solid fa-scissors text-indigo-400"></i>
+              Dynamisk Kaplista / Sågspecifikation (18 mm Melamin)
+            </h2>
+            <p class="text-xs text-slate-400">
+              Måtten uppdateras i realtid baserat på din sektionsindelning. Inklusive skjutdörrspaket.
+            </p>
+          </div>
+          <span class="text-xs font-mono bg-emerald-950/60 text-emerald-300 border border-emerald-800 px-3 py-1 rounded-full">
+            Platsbyggd nischkonstruktion
+          </span>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs sm:text-sm">
+            <thead class="bg-slate-800/80 text-slate-300 font-semibold border-b border-slate-700">
+              <tr>
+                <th class="p-3">Sektion / Komponent</th>
+                <th class="p-3 font-mono">Bredd (B) mm</th>
+                <th class="p-3 font-mono">Höjd/Tjocklek mm</th>
+                <th class="p-3 font-mono">Djup (D) mm</th>
+                <th class="p-3">Antal</th>
+                <th class="p-3">Placering & Notering</th>
+              </tr>
+            </thead>
+            <tbody id="cutListTableBody" class="divide-y divide-slate-800 font-mono text-slate-300">
+              <!-- Renderas dynamiskt i JavaScript -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Sidfot -->
+  <footer class="mt-auto border-t border-slate-800 bg-slate-950/80 py-4 px-4 sm:px-6">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-400">
+      <div class="flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-indigo-500"></span>
+        <span class="text-slate-300 font-medium">Platsbyggd Garderob med Spegeldörrar & flyttbara sektioner</span>
+      </div>
+      <div class="font-mono text-slate-400">
+        Skapad av Jonas Lund 2026
+      </div>
+    </div>
+  </footer>
+
+  <!-- Status Toast -->
+  <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 bg-slate-800 border border-slate-700 text-white text-xs px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3">
+    <i id="toastIcon" class="fa-solid fa-circle-check text-emerald-400 text-base"></i>
+    <span id="toastMsg">Meddelande</span>
+  </div>
+
+  <script>
+    // ==========================================
+    // 1. DATA-MODELL (DYNAMISKT TILLSTÅND)
+    // ==========================================
+    const state = {
+      totalWidth: 135,       // Total nischbredd i cm
+      totalHeight: 250,      // Total nischhöjd i cm
+      totalDepth: 56.5,      // Total nischdjup i cm
+      floorWidth: 133,       // Bredd mellan golvlister i cm
+      thickness: 1.8,        // Skivtjocklek i cm (18 mm)
+      
+      // Justerbara sektionsparametrar
+      mainWidth: 112,        // Huvudsektion bredd (kläddel)
+      topHeight: 75,         // Toppsektion höjd (hatthyllor)
+      bottomHeight: 35,      // Bottensektion höjd (skohyllor)
+      numTopShelves: 3,      // Antal hatthyllplan
+      numShoeShelves: 2,     // Antal skohyllplan
+      numTowerShelves: 6,    // Antal hyllplan i höger skotorn
+
+      // Kalkylerade värden (uppdateras i recalculate())
+      towerWidth: 23,
+      hangingHeight: 140,
+      innerDepth: 48,        // Total djup minus dörrspår (~8.5 cm)
+      topSlotHeight: 25,
+      towerSlotHeight: 23.3,
+      shoeSlotHeight: 17.5
+    };
+
+    function recalculate() {
+      state.towerWidth = Math.max(10, Math.round((state.totalWidth - state.thickness - state.mainWidth) * 10) / 10);
+      state.hangingHeight = Math.max(40, state.totalHeight - state.topHeight - state.bottomHeight);
+      state.innerDepth = Math.max(25, Math.round((state.totalDepth - 8.5) * 10) / 10);
+      state.topSlotHeight = Math.round((state.topHeight / state.numTopShelves) * 10) / 10;
+      state.towerSlotHeight = Math.round((state.hangingHeight / (state.numTowerShelves + 1)) * 10) / 10;
+      state.shoeSlotHeight = Math.round((state.bottomHeight / state.numShoeShelves) * 10) / 10;
+    }
+    recalculate();
+
+    // ==========================================
+    // 2. DOM-ELEMENT & FLIKAR
+    // ==========================================
+    const tab3dBtn = document.getElementById('tab3dBtn');
+    const tab2dBtn = document.getElementById('tab2dBtn');
+    const tabCutBtn = document.getElementById('tabCutBtn');
+    const view3d = document.getElementById('view3d');
+    const view2d = document.getElementById('view2d');
+    const viewCut = document.getElementById('viewCut');
+
+    function setActiveTab(activeBtn, activeView) {
+      [tab3dBtn, tab2dBtn, tabCutBtn].forEach(b => {
+        b.className = "px-2.5 py-1.5 rounded-lg text-slate-400 hover:text-white transition";
+      });
+      activeBtn.className = "px-2.5 py-1.5 rounded-lg bg-indigo-600 text-white transition shadow";
+
+      [view3d, view2d, viewCut].forEach(v => v.classList.add('hidden'));
+      activeView.classList.remove('hidden');
+
+      if (activeView === view3d) {
+        onWindowResize();
+      } else if (activeView === view2d) {
+        renderDynamicCadSvg();
+      } else if (activeView === viewCut) {
+        renderCutListTable();
+      }
+    }
+
+    tab3dBtn.addEventListener('click', () => setActiveTab(tab3dBtn, view3d));
+    tab2dBtn.addEventListener('click', () => setActiveTab(tab2dBtn, view2d));
+    tabCutBtn.addEventListener('click', () => setActiveTab(tabCutBtn, viewCut));
+
+    function showToast(msg, icon = 'fa-circle-check', isError = false) {
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toastMsg');
+      const toastIcon = document.getElementById('toastIcon');
+
+      toastMsg.textContent = msg;
+      toastIcon.className = `fa-solid ${icon} ${isError ? 'text-rose-400' : 'text-emerald-400'} text-base`;
+      toast.classList.remove('translate-y-20', 'opacity-0');
+
+      setTimeout(() => {
+        toast.classList.add('translate-y-20', 'opacity-0');
+      }, 3000);
+    }
+
+    // Reglage-element
+    const sliderMainWidth = document.getElementById('sliderMainWidth');
+    const sliderTopHeight = document.getElementById('sliderTopHeight');
+    const sliderBottomHeight = document.getElementById('sliderBottomHeight');
+    const numMainWidth = document.getElementById('numMainWidth');
+    const numTopHeight = document.getElementById('numTopHeight');
+    const numBottomHeight = document.getElementById('numBottomHeight');
+    const selectTopShelves = document.getElementById('selectTopShelves');
+    const selectShoeShelves = document.getElementById('selectShoeShelves');
+    const selectTowerShelves = document.getElementById('selectTowerShelves');
+    const inputDepth = document.getElementById('inputDepth');
+
+    const valMainWSub = document.getElementById('valMainWSub');
+    const valTowerWSub = document.getElementById('valTowerWSub');
+    const valHangingHeight = document.getElementById('valHangingHeight');
+    const headerDimBadge = document.getElementById('headerDimBadge');
+
+    function syncControlsFromState() {
+      sliderMainWidth.value = state.mainWidth;
+      sliderTopHeight.value = state.topHeight;
+      sliderBottomHeight.value = state.bottomHeight;
+      numMainWidth.value = state.mainWidth;
+      numTopHeight.value = state.topHeight;
+      numBottomHeight.value = state.bottomHeight;
+      selectTopShelves.value = state.numTopShelves;
+      selectShoeShelves.value = state.numShoeShelves;
+      selectTowerShelves.value = state.numTowerShelves;
+      inputDepth.value = state.totalDepth;
+
+      valMainWSub.textContent = `${state.mainWidth} cm`;
+      valTowerWSub.textContent = `${state.towerWidth} cm`;
+      valHangingHeight.textContent = `${state.hangingHeight} cm`;
+      headerDimBadge.textContent = `${state.totalWidth} × ${state.totalHeight} × ${state.totalDepth} cm`;
+
+      updateInspectorHUD();
+    }
+
+    function onParameterChange() {
+      state.mainWidth = parseFloat(sliderMainWidth.value);
+      state.topHeight = parseFloat(sliderTopHeight.value);
+      state.bottomHeight = parseFloat(sliderBottomHeight.value);
+      state.numTopShelves = parseInt(selectTopShelves.value, 10);
+      state.numShoeShelves = parseInt(selectShoeShelves.value, 10);
+      state.numTowerShelves = parseInt(selectTowerShelves.value, 10);
+      state.totalDepth = parseFloat(inputDepth.value) || 56.5;
+
+      recalculate();
+      syncControlsFromState();
+      renderSectionCards();
+      rebuild3DWardrobe();
+      renderDynamicCadSvg();
+      renderCutListTable();
+    }
+
+    [sliderMainWidth, sliderTopHeight, sliderBottomHeight, selectTopShelves, selectShoeShelves, selectTowerShelves, inputDepth].forEach(el => {
+      el.addEventListener('input', onParameterChange);
+      el.addEventListener('change', onParameterChange);
+    });
+
+    numMainWidth.addEventListener('change', () => {
+      sliderMainWidth.value = numMainWidth.value;
+      onParameterChange();
+    });
+    numTopHeight.addEventListener('change', () => {
+      sliderTopHeight.value = numTopHeight.value;
+      onParameterChange();
+    });
+    numBottomHeight.addEventListener('change', () => {
+      sliderBottomHeight.value = numBottomHeight.value;
+      onParameterChange();
+    });
+
+    document.getElementById('btnResetDefaults').addEventListener('click', () => {
+      state.mainWidth = 112;
+      state.topHeight = 75;
+      state.bottomHeight = 35;
+      state.numTopShelves = 3;
+      state.numShoeShelves = 2;
+      state.numTowerShelves = 6;
+      state.totalDepth = 56.5;
+      onParameterChange();
+      showToast('Återställt till originalmått!');
+    });
+
+    function renderSectionCards() {
+      const container = document.getElementById('sectionCardsContainer');
+      const items = [
+        {
+          name: `Hatthyllor (${state.numTopShelves} st)`,
+          w: state.mainWidth,
+          h: state.topSlotHeight,
+          d: state.innerDepth,
+          color: 'border-indigo-500 text-indigo-400',
+          desc: `${state.numTopShelves} fack à ${state.topSlotHeight} cm höjd.`
+        },
+        {
+          name: 'Hängdel: Klädstång + Hängkrokar',
+          w: state.mainWidth,
+          h: state.hangingHeight,
+          d: state.innerDepth,
+          color: 'border-emerald-500 text-emerald-400',
+          desc: 'Både stång för galgar och kroklist med 6 st jackkrokar.'
+        },
+        {
+          name: `Skotorn Höger (${state.numTowerShelves} hyllor)`,
+          w: state.towerWidth,
+          h: state.hangingHeight,
+          d: state.innerDepth,
+          color: 'border-amber-500 text-amber-400',
+          desc: `${state.numTowerShelves + 1} fack à ~${state.towerSlotHeight} cm fackhöjd.`
+        },
+        {
+          name: `Skohyllor Botten (${state.numShoeShelves} st)`,
+          w: state.floorWidth,
+          h: state.bottomHeight,
+          d: state.innerDepth,
+          color: 'border-rose-500 text-rose-400',
+          desc: `Totalhöjd ${state.bottomHeight} cm från golv. Fack à ~${state.shoeSlotHeight} cm.`
+        }
+      ];
+
+      container.innerHTML = items.map(item => `
+        <div class="p-2 bg-slate-950 rounded-xl border-l-4 ${item.color.split(' ')[0]} flex justify-between items-center">
+          <div>
+            <span class="font-bold text-white block text-[11px]">${item.name}</span>
+            <span class="text-slate-400 text-[10px]">${item.desc}</span>
+          </div>
+          <div class="text-right font-mono">
+            <span class="${item.color.split(' ')[1]} font-bold block text-xs">
+              B: ${item.w} × H: ${item.h} × D: ${item.d} cm
+            </span>
+            <span class="text-[9px] text-slate-500">Bredd × Höjd × Djup</span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // ==========================================
+    // 3. THREE.JS 3D SCEN & MODELL
+    // ==========================================
+    let scene, camera, renderer;
+    let wardrobeGroup;
+    let doorLeftGroup, doorRightGroup;
+    let outerDimensionGroup, sectionDimensionGroup;
+    let editHandlesGroup;
+    let ledLight, ledMesh;
+
+    let isOuterDimsVisible = true;
+    let isSectionDimsVisible = true;
+    let isLightOn = true;
+    let doorsVisible = true;
+
+    // Redigeringsläge
+    let isEditMode = false;
+    let selectedSectionKey = 'divider';
+    let isDraggingHandle = false;
+    let activeDragTarget = null;
+    const raycaster = new THREE.Raycaster();
+    const mouseCoord = new THREE.Vector2();
+    const dragPlane = new THREE.Plane();
+    const dragPlaneIntersect = new THREE.Vector3();
+
+    // Orbit-kamera (med spärr mot under-golvnivå)
+    let isOrbiting = false;
+    let prevMouseX = 0;
+    let prevMouseY = 0;
+    let cameraRadius = 3.8;
+    let cameraTheta = 0;
+    let cameraPhi = Math.PI / 2.25;
+    const cameraTarget = new THREE.Vector3(0, 1.25, 0);
+
+    // Dörrpositioner
+    let doorClosedLeftX = -0.34;
+    let doorClosedRightX = 0.34;
+    let targetDoorLeftX = 0.34; // Startar öppen så inredningen syns direkt
+    let targetDoorRightX = 0.34;
+
+    const container3d = document.getElementById('canvasContainer');
+
+    function createReflectiveEnvironment() {
+      const cubeSize = 128;
+      const canvases = [];
+
+      for (let i = 0; i < 6; i++) {
+        const c = document.createElement('canvas');
+        c.width = cubeSize;
+        c.height = cubeSize;
+        const ctx = c.getContext('2d');
+
+        const grad = ctx.createLinearGradient(0, 0, 0, cubeSize);
+        grad.addColorStop(0, '#f8fafc');
+        grad.addColorStop(0.5, '#e2e8f0');
+        grad.addColorStop(1, '#cbd5e1');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, cubeSize, cubeSize);
+
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(20, 20, 40, 60);
+        ctx.fillRect(70, 20, 40, 60);
+
+        ctx.strokeStyle = '#93c5fd';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(0, 50);
+        ctx.lineTo(cubeSize, 50);
+        ctx.stroke();
+
+        canvases.push(c);
+      }
+
+      const cubeTex = new THREE.CubeTexture(canvases);
+      cubeTex.needsUpdate = true;
+      return cubeTex;
+    }
+
+    function createBoxWithEdges(width, height, depth, material, edgeColor = 0x475569) {
+      const group = new THREE.Group();
+      const geom = new THREE.BoxGeometry(width, height, depth);
+      const mesh = new THREE.Mesh(geom, material);
+      mesh.castShadow = true;
+      mesh.receiveShadow = true;
+      group.add(mesh);
+
+      const edges = new THREE.EdgesGeometry(geom);
+      const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: edgeColor, linewidth: 1 }));
+      group.add(line);
+
+      return group;
+    }
+
+    function init3D() {
+      scene = new THREE.Scene();
+      scene.background = new THREE.Color(0x060913);
+
+      const envMap = createReflectiveEnvironment();
+      scene.environment = envMap;
+
+      const width = container3d.clientWidth || 800;
+      const height = container3d.clientHeight || 600;
+      const aspect = width / height;
+      camera = new THREE.PerspectiveCamera(45, aspect, 0.1, 100);
+      updateCameraPosition();
+
+      renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
+      renderer.setSize(width, height);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.shadowMap.enabled = true;
+      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+      container3d.appendChild(renderer.domElement);
+
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.85);
+      scene.add(ambientLight);
+
+      const dirLight = new THREE.DirectionalLight(0xffffff, 0.9);
+      dirLight.position.set(3, 4, 3);
+      dirLight.castShadow = true;
+      scene.add(dirLight);
+
+      const softFill = new THREE.DirectionalLight(0x93c5fd, 0.4);
+      softFill.position.set(-3, 2, 2);
+      scene.add(softFill);
+
+      buildRoom();
+
+      wardrobeGroup = new THREE.Group();
+      scene.add(wardrobeGroup);
+
+      outerDimensionGroup = new THREE.Group();
+      scene.add(outerDimensionGroup);
+
+      sectionDimensionGroup = new THREE.Group();
+      scene.add(sectionDimensionGroup);
+
+      editHandlesGroup = new THREE.Group();
+      scene.add(editHandlesGroup);
+
+      rebuild3DWardrobe();
+      setupOrbitControls();
+      setupEditModeInteractions();
+      setupDoorButtons();
+      setupControlButtons();
+
+      if (window.ResizeObserver) {
+        const ro = new ResizeObserver(() => onWindowResize());
+        ro.observe(container3d);
+      }
+
+      window.addEventListener('resize', onWindowResize);
+      setTimeout(onWindowResize, 50);
+      setTimeout(onWindowResize, 250);
+    }
+
+    function buildRoom() {
+      const floorMat = new THREE.MeshStandardMaterial({
+        color: 0x1e293b,
+        roughness: 0.6,
+        metalness: 0.1
+      });
+      const floor = new THREE.Mesh(new THREE.PlaneGeometry(6, 6), floorMat);
+      floor.rotation.x = -Math.PI / 2;
+      floor.position.y = 0;
+      floor.receiveShadow = true;
+      scene.add(floor);
+
+      const wallMat = new THREE.MeshStandardMaterial({ color: 0x090d16, roughness: 0.95 });
+      const backWall = new THREE.Mesh(new THREE.PlaneGeometry(6, 4), wallMat);
+      backWall.position.set(0, 2, -0.35);
+      scene.add(backWall);
+    }
+
+    function createTextBadge(text, color = '#38bdf8', bg = 'rgba(15, 23, 42, 0.92)', width = 420, height = 75) {
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext('2d');
+
+      ctx.fillStyle = bg;
+      ctx.beginPath();
+      ctx.roundRect(4, 4, width - 8, height - 8, 12);
+      ctx.fill();
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.roundRect(4, 4, width - 8, height - 8, 12);
+      ctx.stroke();
+
+      ctx.fillStyle = color;
+      ctx.font = 'bold 22px "JetBrains Mono", monospace';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(text, width / 2, height / 2);
+
+      const texture = new THREE.CanvasTexture(canvas);
+      const spriteMat = new THREE.SpriteMaterial({ map: texture, depthTest: false });
+      const sprite = new THREE.Sprite(spriteMat);
+      sprite.scale.set(0.56, 0.10, 1);
+      return sprite;
+    }
+
+    function rebuild3DWardrobe() {
+      while (wardrobeGroup.children.length > 0) {
+        wardrobeGroup.remove(wardrobeGroup.children[0]);
+      }
+      while (outerDimensionGroup.children.length > 0) {
+        outerDimensionGroup.remove(outerDimensionGroup.children[0]);
+      }
+      while (sectionDimensionGroup.children.length > 0) {
+        sectionDimensionGroup.remove(sectionDimensionGroup.children[0]);
+      }
+      while (editHandlesGroup.children.length > 0) {
+        editHandlesGroup.remove(editHandlesGroup.children[0]);
+      }
+
+      const W = state.totalWidth / 100;
+      const H = state.totalHeight / 100;
+      const D = state.totalDepth / 100;
+      const t = state.thickness / 100;
+      const inD = state.innerDepth / 100;
+
+      const mainW = state.mainWidth / 100;
+      const topH = state.topHeight / 100;
+      const botH = state.bottomHeight / 100;
+      const hangH = state.hangingHeight / 100;
+      const towerW = state.towerWidth / 100;
+
+      const woodMat = new THREE.MeshStandardMaterial({ color: 0xf1f5f9, roughness: 0.5, metalness: 0.05 });
+      const backMat = new THREE.MeshStandardMaterial({ color: 0x334155, roughness: 0.8 });
+      const metalMat = new THREE.MeshStandardMaterial({ color: 0xe2e8f0, roughness: 0.2, metalness: 0.9 });
+
+      // Gavlar & topplatta
+      const leftGable = createBoxWithEdges(t, H, D, woodMat);
+      leftGable.position.set(-W/2 + t/2, H/2, 0);
+      wardrobeGroup.add(leftGable);
+
+      const rightGable = createBoxWithEdges(t, H, D, woodMat);
+      rightGable.position.set(W/2 - t/2, H/2, 0);
+      wardrobeGroup.add(rightGable);
+
+      const topPlate = createBoxWithEdges(W, t, D, woodMat);
+      topPlate.position.set(0, H - t/2, 0);
+      wardrobeGroup.add(topPlate);
+
+      // Bakstycke
+      const backBoard = new THREE.Mesh(new THREE.BoxGeometry(W - 2*t, H - t, 0.005), backMat);
+      backBoard.position.set(0, H/2, -D/2 + 0.003);
+      wardrobeGroup.add(backBoard);
+
+      // Skiljevägg
+      const divX = -W/2 + t + mainW + t/2;
+      const mainCenterX = -W/2 + t + (mainW / 2);
+      const towerCenterX = divX + t/2 + (towerW / 2);
+
+      const divider = createBoxWithEdges(t, hangH, inD, woodMat, selectedSectionKey === 'divider' && isEditMode ? 0x10b981 : 0x475569);
+      divider.position.set(divX, botH + (hangH / 2), -0.042);
+      divider.userData = { section: 'divider' };
+      wardrobeGroup.add(divider);
+
+      // Hatthyllor
+      const topShelfSpacing = topH / state.numTopShelves;
+      for (let i = 1; i <= state.numTopShelves; i++) {
+        const shelfY = H - (i * topShelfSpacing);
+        const shelf = createBoxWithEdges(mainW, t, inD, woodMat, selectedSectionKey === 'top' && isEditMode ? 0x6366f1 : 0x475569);
+        shelf.position.set(mainCenterX, shelfY, -0.042);
+        shelf.userData = { section: 'top' };
+        wardrobeGroup.add(shelf);
+      }
+
+      // Kroklist och stång
+      const lowestTopY = H - topH;
+      const hookBarY = lowestTopY - 0.04;
+      const hookBar = createBoxWithEdges(mainW, 0.055, 0.018, woodMat, 0x334155);
+      hookBar.position.set(mainCenterX, hookBarY, -D/2 + 0.02);
+      wardrobeGroup.add(hookBar);
+
+      const numHooks = 6;
+      for (let k = 0; k < numHooks; k++) {
+        const hookGroup = new THREE.Group();
+        const hookX = mainCenterX - (mainW/2) + (mainW * 0.1) + (k * ((mainW * 0.8) / (numHooks - 1)));
+        
+        const base = new THREE.Mesh(new THREE.CylinderGeometry(0.009, 0.009, 0.006, 12), metalMat);
+        base.rotation.x = Math.PI / 2;
+        hookGroup.add(base);
+
+        const peg = new THREE.Mesh(new THREE.CylinderGeometry(0.005, 0.005, 0.045, 12), metalMat);
+        peg.rotation.x = Math.PI / 2;
+        peg.position.z = 0.022;
+        hookGroup.add(peg);
+
+        const tip = new THREE.Mesh(new THREE.SphereGeometry(0.008, 12, 12), metalMat);
+        tip.position.set(0, 0.015, 0.04);
+        hookGroup.add(tip);
+
+        hookGroup.position.set(hookX, hookBarY, -D/2 + 0.03);
+        wardrobeGroup.add(hookGroup);
+      }
+
+      // Klädstång
+      const rodY = lowestTopY - 0.15;
+      const rodGeom = new THREE.CylinderGeometry(0.013, 0.013, mainW - 0.02, 24);
+      const rodMat = new THREE.MeshStandardMaterial({ color: 0xf8fafc, metalness: 0.95, roughness: 0.12 });
+      const rod = new THREE.Mesh(rodGeom, rodMat);
+      rod.rotation.z = Math.PI / 2;
+      rod.position.set(mainCenterX, rodY, -0.02);
+      wardrobeGroup.add(rod);
+
+      const fL = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 0.012, 16), metalMat);
+      fL.rotation.z = Math.PI / 2;
+      fL.position.set(mainCenterX - (mainW/2) + 0.008, rodY, -0.02);
+      wardrobeGroup.add(fL);
+
+      const fR = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 0.012, 16), metalMat);
+      fR.rotation.z = Math.PI / 2;
+      fR.position.set(mainCenterX + (mainW/2) - 0.008, rodY, -0.02);
+      wardrobeGroup.add(fR);
+
+      // Galgar
+      for (let g = 0; g < 5; g++) {
+        const hangerGroup = new THREE.Group();
+        const hgX = mainCenterX - (mainW * 0.32) + (g * (mainW * 0.16));
+        
+        const hHook = new THREE.Mesh(new THREE.TorusGeometry(0.016, 0.003, 8, 16, Math.PI * 1.3), metalMat);
+        hHook.position.set(0, 0.018, 0);
+        hHook.rotation.y = Math.PI / 2;
+        hangerGroup.add(hHook);
+
+        const hangerWood = new THREE.Mesh(
+          new THREE.BoxGeometry(0.014, 0.016, 0.38),
+          new THREE.MeshStandardMaterial({ color: 0xd97706, roughness: 0.4 })
+        );
+        hangerWood.position.set(0, -0.01, 0);
+        hangerGroup.add(hangerWood);
+
+        hangerGroup.position.set(hgX, rodY, -0.02);
+        wardrobeGroup.add(hangerGroup);
+      }
+
+      // Skotorn
+      const towerStep = hangH / (state.numTowerShelves + 1);
+      for (let s = 1; s <= state.numTowerShelves; s++) {
+        const shelfY = botH + (s * towerStep);
+        const tShelf = createBoxWithEdges(towerW, t, inD, woodMat, selectedSectionKey === 'tower' && isEditMode ? 0xf59e0b : 0x475569);
+        tShelf.position.set(towerCenterX, shelfY, -0.042);
+        tShelf.userData = { section: 'tower' };
+        wardrobeGroup.add(tShelf);
+      }
+
+      for (let ts = 1; ts <= state.numTopShelves; ts++) {
+        const shelfY = H - (ts * topShelfSpacing);
+        const tTopShelf = createBoxWithEdges(towerW, t, inD, woodMat);
+        tTopShelf.position.set(towerCenterX, shelfY, -0.042);
+        wardrobeGroup.add(tTopShelf);
+      }
+
+      // Skohyllor botten
+      const shoeStep = botH / state.numShoeShelves;
+      for (let sh = 1; sh <= state.numShoeShelves; sh++) {
+        const shelfY = sh * shoeStep;
+        const sShelf = createBoxWithEdges(W - 2*t, t, inD, woodMat, selectedSectionKey === 'bottom' && isEditMode ? 0xf43f5e : 0x475569);
+        sShelf.position.set(0, shelfY, -0.042);
+        sShelf.userData = { section: 'bottom' };
+        wardrobeGroup.add(sShelf);
+      }
+
+      // 3D-handtag om redigeringsläge är aktivt
+      if (isEditMode) {
+        build3DEditHandles(divX, mainCenterX, lowestTopY, botH, H, inD);
+      }
+
+      // Spegeldörrar
+      createBrightSlidingDoors(W, H, D);
+
+      // Takbelysning
+      const ledBar = new THREE.BoxGeometry(W - 0.1, 0.015, 0.02);
+      const ledMat = new THREE.MeshStandardMaterial({
+        color: 0xfffbeb,
+        emissive: 0xfef08a,
+        emissiveIntensity: isLightOn ? 1.5 : 0.0,
+        roughness: 0.2
+      });
+      ledMesh = new THREE.Mesh(ledBar, ledMat);
+      ledMesh.position.set(0, H - 0.02, 0.12);
+      wardrobeGroup.add(ledMesh);
+
+      ledLight = new THREE.PointLight(0xfff7ed, isLightOn ? 1.2 : 0.0, 3.5);
+      ledLight.position.set(0, H - 0.05, 0.1);
+      wardrobeGroup.add(ledLight);
+
+      // Måttbrickor
+      build3DDimensionBadges(mainCenterX, towerCenterX, lowestTopY, botH, H, W, D);
+    }
+
+    function createBrightSlidingDoors(W, H, D) {
+      const doorW = (W / 2) + 0.035;
+      const doorH = H - 0.035;
+      const frameT = 0.022;
+
+      doorClosedLeftX = -W / 4;
+      doorClosedRightX = W / 4;
+
+      const mirrorMat = new THREE.MeshStandardMaterial({
+        color: 0xf8fafc,
+        metalness: 0.98,
+        roughness: 0.04,
+        envMapIntensity: 1.8
+      });
+      const frameMat = new THREE.MeshStandardMaterial({
+        color: 0x94a3b8,
+        metalness: 0.85,
+        roughness: 0.25
+      });
+
+      function buildSingleDoor() {
+        const grp = new THREE.Group();
+        const mirror = new THREE.Mesh(new THREE.BoxGeometry(doorW - 0.03, doorH - 0.03, 0.006), mirrorMat);
+        grp.add(mirror);
+
+        const fTop = new THREE.Mesh(new THREE.BoxGeometry(doorW, 0.02, frameT), frameMat);
+        fTop.position.y = doorH / 2 - 0.01;
+        grp.add(fTop);
+
+        const fBot = new THREE.Mesh(new THREE.BoxGeometry(doorW, 0.02, frameT), frameMat);
+        fBot.position.y = -doorH / 2 + 0.01;
+        grp.add(fBot);
+
+        const fL = new THREE.Mesh(new THREE.BoxGeometry(0.02, doorH, frameT), frameMat);
+        fL.position.x = -doorW / 2 + 0.01;
+        grp.add(fL);
+
+        const fR = new THREE.Mesh(new THREE.BoxGeometry(0.02, doorH, frameT), frameMat);
+        fR.position.x = doorW / 2 - 0.01;
+        grp.add(fR);
+
+        const handle = new THREE.Mesh(new THREE.BoxGeometry(0.01, 0.35, 0.018), frameMat);
+        handle.position.set(doorW / 2 - 0.03, 0, 0.012);
+        grp.add(handle);
+
+        return grp;
+      }
+
+      // Topphängd skena
+      const topRail = new THREE.Mesh(new THREE.BoxGeometry(W, 0.025, 0.075), frameMat);
+      topRail.position.set(0, H - 0.012, D / 2 - 0.03);
+      wardrobeGroup.add(topRail);
+
+      // Vänster dörr
+      doorLeftGroup = buildSingleDoor();
+      doorLeftGroup.position.set(targetDoorLeftX, doorH / 2 + 0.01, D / 2 - 0.012);
+      doorLeftGroup.visible = doorsVisible;
+      wardrobeGroup.add(doorLeftGroup);
+
+      // Höger dörr
+      doorRightGroup = buildSingleDoor();
+      doorRightGroup.position.set(targetDoorRightX, doorH / 2 + 0.01, D / 2 - 0.048);
+      doorRightGroup.visible = doorsVisible;
+      wardrobeGroup.add(doorRightGroup);
+    }
+
+    function build3DDimensionBadges(mainCenterX, towerCenterX, lowestTopY, botH, H, W, D) {
+      // 1. Sektionsmått (B × H × D)
+      const topBadge = createTextBadge(`Hatthyllor: B: ${state.mainWidth} × H: ${state.topSlotHeight} × D: ${state.innerDepth} cm`, "#818cf8");
+      topBadge.position.set(mainCenterX, lowestTopY + (state.topHeight / 200), 0.05);
+      sectionDimensionGroup.add(topBadge);
+
+      const hangBadge = createTextBadge(`Hängdel: B: ${state.mainWidth} × H: ${state.hangingHeight} × D: ${state.innerDepth} cm`, "#34d399");
+      hangBadge.position.set(mainCenterX, botH + (state.hangingHeight / 200) - 0.05, 0.05);
+      sectionDimensionGroup.add(hangBadge);
+
+      const towerBadge = createTextBadge(`Skotorn: B: ${state.towerWidth} × H: ${state.hangingHeight} × D: ${state.innerDepth} cm`, "#fbbf24");
+      towerBadge.position.set(towerCenterX, botH + (state.hangingHeight / 200), 0.05);
+      sectionDimensionGroup.add(towerBadge);
+
+      const shoeBadge = createTextBadge(`Skor: B: ${state.floorWidth} × H: ${state.bottomHeight} × D: ${state.innerDepth} cm`, "#fb7185");
+      shoeBadge.position.set(0, botH / 2, 0.05);
+      sectionDimensionGroup.add(shoeBadge);
+
+      sectionDimensionGroup.visible = isSectionDimsVisible;
+
+      // 2. Yttermått
+      const totalHBadge = createTextBadge(`Höjd: ${state.totalHeight} cm`, "#38bdf8", "rgba(15,23,42,0.95)", 280, 65);
+      totalHBadge.position.set(-W/2 - 0.22, H/2, 0);
+      totalHBadge.scale.set(0.40, 0.09, 1);
+      outerDimensionGroup.add(totalHBadge);
+
+      const topWBadge = createTextBadge(`Bredd Tak: ${state.totalWidth} cm`, "#38bdf8", "rgba(15,23,42,0.95)", 320, 65);
+      topWBadge.position.set(0, H + 0.12, 0);
+      topWBadge.scale.set(0.44, 0.09, 1);
+      outerDimensionGroup.add(topWBadge);
+
+      const floorWBadge = createTextBadge(`Bredd Golv: ${state.floorWidth} cm`, "#f59e0b", "rgba(15,23,42,0.95)", 340, 65);
+      floorWBadge.position.set(0, -0.10, 0);
+      floorWBadge.scale.set(0.46, 0.09, 1);
+      outerDimensionGroup.add(floorWBadge);
+
+      outerDimensionGroup.visible = isOuterDimsVisible;
+    }
+
+    function build3DEditHandles(divX, mainCenterX, lowestTopY, botH, H, inD) {
+      // 1. Skiljeväggshandtag
+      const dividerHandle = new THREE.Group();
+      dividerHandle.position.set(divX, botH + (state.hangingHeight / 200), inD / 2 - 0.02);
+      
+      const divHandleMesh = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.04, 0.04, 0.14, 16),
+        new THREE.MeshStandardMaterial({ color: 0x10b981, roughness: 0.3, metalness: 0.8, emissive: 0x059669, emissiveIntensity: 0.6 })
+      );
+      divHandleMesh.rotation.z = Math.PI / 2;
+      dividerHandle.add(divHandleMesh);
+
+      const divLabel = createTextBadge("↔ DRA SKILJEVÄGG", "#10b981", "rgba(6,78,59,0.95)", 300, 60);
+      divLabel.position.set(0, 0.12, 0);
+      divLabel.scale.set(0.35, 0.07, 1);
+      dividerHandle.add(divLabel);
+
+      dividerHandle.userData = { handleType: 'divider' };
+      divHandleMesh.userData = { handleType: 'divider' };
+      editHandlesGroup.add(dividerHandle);
+
+      // 2. Toppsektionshandtag
+      const topHandle = new THREE.Group();
+      topHandle.position.set(mainCenterX, lowestTopY, inD / 2 - 0.02);
+
+      const topHandleMesh = new THREE.Mesh(
+        new THREE.BoxGeometry(0.18, 0.04, 0.06),
+        new THREE.MeshStandardMaterial({ color: 0x6366f1, roughness: 0.3, metalness: 0.8, emissive: 0x4f46e5, emissiveIntensity: 0.6 })
+      );
+      topHandle.add(topHandleMesh);
+
+      const topLabel = createTextBadge("↕ DRA TOPPHÖJD", "#818cf8", "rgba(30,27,75,0.95)", 300, 60);
+      topLabel.position.set(0, -0.09, 0);
+      topLabel.scale.set(0.35, 0.07, 1);
+      topHandle.add(topLabel);
+
+      topHandle.userData = { handleType: 'top' };
+      topHandleMesh.userData = { handleType: 'top' };
+      editHandlesGroup.add(topHandle);
+
+      // 3. Bottensektionshandtag
+      const bottomHandle = new THREE.Group();
+      bottomHandle.position.set(0, botH, inD / 2 - 0.02);
+
+      const botHandleMesh = new THREE.Mesh(
+        new THREE.BoxGeometry(0.18, 0.04, 0.06),
+        new THREE.MeshStandardMaterial({ color: 0xf43f5e, roughness: 0.3, metalness: 0.8, emissive: 0xe11d48, emissiveIntensity: 0.6 })
+      );
+      bottomHandle.add(botHandleMesh);
+
+      const botLabel = createTextBadge("↕ DRA SKOHÖJD", "#fb7185", "rgba(76,5,25,0.95)", 300, 60);
+      botLabel.position.set(0, 0.09, 0);
+      botLabel.scale.set(0.35, 0.07, 1);
+      bottomHandle.add(botLabel);
+
+      bottomHandle.userData = { handleType: 'bottom' };
+      botHandleMesh.userData = { handleType: 'bottom' };
+      editHandlesGroup.add(bottomHandle);
+    }
+
+    function setupOrbitControls() {
+      const dom = renderer.domElement;
+
+      dom.addEventListener('pointerdown', (e) => {
+        if (isDraggingHandle) return;
+        isOrbiting = true;
+        prevMouseX = e.clientX;
+        prevMouseY = e.clientY;
+      });
+
+      dom.addEventListener('pointermove', (e) => {
+        if (!isOrbiting || isDraggingHandle) return;
+        const deltaX = e.clientX - prevMouseX;
+        const deltaY = e.clientY - prevMouseY;
+        prevMouseX = e.clientX;
+        prevMouseY = e.clientY;
+
+        cameraTheta -= deltaX * 0.008;
+        cameraPhi -= deltaY * 0.008;
+
+        // Spärra kameran så den aldrig dyker under golvet (Y=0)
+        cameraPhi = Math.max(0.15, Math.min(Math.PI / 2.05, cameraPhi));
+        updateCameraPosition();
+      });
+
+      window.addEventListener('pointerup', () => {
+        isOrbiting = false;
+      });
+
+      dom.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        cameraRadius = Math.max(2.0, Math.min(6.5, cameraRadius + e.deltaY * 0.003));
+        updateCameraPosition();
+      }, { passive: false });
+    }
+
+    function updateCameraPosition() {
+      camera.position.x = cameraTarget.x + cameraRadius * Math.sin(cameraPhi) * Math.sin(cameraTheta);
+      camera.position.y = cameraTarget.y + cameraRadius * Math.cos(cameraPhi);
+      camera.position.z = cameraTarget.z + cameraRadius * Math.sin(cameraPhi) * Math.cos(cameraTheta);
+      camera.lookAt(cameraTarget);
+    }
+
+    function setupEditModeInteractions() {
+      const dom = renderer.domElement;
+      const btnToggle = document.getElementById('btnToggleEditMode');
+      const btnText = document.getElementById('editModeBtnText');
+      const banner = document.getElementById('editModeBanner');
+      const inspector = document.getElementById('editModeInspector');
+
+      btnToggle.addEventListener('click', () => {
+        isEditMode = !isEditMode;
+        if (isEditMode) {
+          btnToggle.className = "px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-semibold transition flex items-center gap-1.5 shadow ring-2 ring-emerald-400";
+          btnText.textContent = "Redigera i 3D: PÅ";
+          banner.classList.remove('hidden');
+          inspector.classList.remove('hidden');
+          doorsVisible = false;
+          showToast('Redigeringsläge aktiverat! Dra i 3D-handtagen eller klicka på sektioner.', 'fa-pen-ruler');
+        } else {
+          btnToggle.className = "px-2.5 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-semibold transition flex items-center gap-1.5 shadow";
+          btnText.textContent = "Redigera i 3D: AV";
+          banner.classList.add('hidden');
+          inspector.classList.add('hidden');
+          showToast('Redigeringsläge avstängt', 'fa-check');
+        }
+        rebuild3DWardrobe();
+        updateInspectorHUD();
+      });
+
+      function updatePointer(e) {
+        const rect = dom.getBoundingClientRect();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        mouseCoord.x = ((clientX - rect.left) / rect.width) * 2 - 1;
+        mouseCoord.y = -((clientY - rect.top) / rect.height) * 2 + 1;
+      }
+
+      dom.addEventListener('pointerdown', (e) => {
+        if (!isEditMode) return;
+        updatePointer(e);
+        raycaster.setFromCamera(mouseCoord, camera);
+
+        const handleIntersects = raycaster.intersectObjects(editHandlesGroup.children, true);
+        if (handleIntersects.length > 0) {
+          let root = handleIntersects[0].object;
+          while (root.parent && root.parent !== editHandlesGroup) {
+            root = root.parent;
+          }
+          if (root.userData && root.userData.handleType) {
+            isDraggingHandle = true;
+            isOrbiting = false;
+            activeDragTarget = root.userData.handleType;
+            selectedSectionKey = activeDragTarget;
+
+            dragPlane.setFromNormalAndCoplanarPoint(new THREE.Vector3(0, 0, 1), root.position);
+            dom.style.cursor = activeDragTarget === 'divider' ? 'col-resize' : 'row-resize';
+            updateInspectorHUD();
+            e.stopPropagation();
+            return;
+          }
+        }
+
+        const wardrobeIntersects = raycaster.intersectObjects(wardrobeGroup.children, true);
+        if (wardrobeIntersects.length > 0) {
+          for (let hit of wardrobeIntersects) {
+            let curr = hit.object;
+            while (curr) {
+              if (curr.userData && curr.userData.section) {
+                selectedSectionKey = curr.userData.section;
+                updateInspectorHUD();
+                rebuild3DWardrobe();
+                return;
+              }
+              curr = curr.parent;
+            }
+          }
+        }
+      });
+
+      dom.addEventListener('pointermove', (e) => {
+        if (!isEditMode) return;
+        updatePointer(e);
+        raycaster.setFromCamera(mouseCoord, camera);
+
+        if (isDraggingHandle && activeDragTarget) {
+          if (raycaster.ray.intersectPlane(dragPlane, dragPlaneIntersect)) {
+            const W = state.totalWidth / 100;
+            const H = state.totalHeight / 100;
+            const t = state.thickness / 100;
+
+            if (activeDragTarget === 'divider') {
+              const leftInnerX = -W/2 + t;
+              const calculatedW_m = dragPlaneIntersect.x - leftInnerX;
+              const calculatedW_cm = Math.round(calculatedW_m * 100);
+              const clamped = Math.max(70, Math.min(122, calculatedW_cm));
+              if (clamped !== state.mainWidth) {
+                sliderMainWidth.value = clamped;
+                numMainWidth.value = clamped;
+                onParameterChange();
+              }
+            } else if (activeDragTarget === 'top') {
+              const calculatedTopH_m = H - dragPlaneIntersect.y;
+              const calculatedTopH_cm = Math.round(calculatedTopH_m * 100);
+              const clamped = Math.max(35, Math.min(100, calculatedTopH_cm));
+              if (clamped !== state.topHeight) {
+                sliderTopHeight.value = clamped;
+                numTopHeight.value = clamped;
+                onParameterChange();
+              }
+            } else if (activeDragTarget === 'bottom') {
+              const calculatedBotH_cm = Math.round(dragPlaneIntersect.y * 100);
+              const clamped = Math.max(20, Math.min(60, calculatedBotH_cm));
+              if (clamped !== state.bottomHeight) {
+                sliderBottomHeight.value = clamped;
+                numBottomHeight.value = clamped;
+                onParameterChange();
+              }
+            }
+          }
+        } else {
+          const hits = raycaster.intersectObjects(editHandlesGroup.children, true);
+          dom.style.cursor = hits.length > 0 ? 'pointer' : 'grab';
+        }
+      });
+
+      window.addEventListener('pointerup', () => {
+        if (isDraggingHandle) {
+          isDraggingHandle = false;
+          activeDragTarget = null;
+          dom.style.cursor = 'grab';
+          showToast('Sektionsmått uppdaterade i alla 3 vyer!', 'fa-arrows-rotate');
+        }
+      });
+    }
+
+    function updateInspectorHUD() {
+      const title = document.getElementById('inspectorTitle');
+      const body = document.getElementById('inspectorBody');
+      if (!title || !body) return;
+
+      if (selectedSectionKey === 'divider') {
+        title.textContent = "Skiljevägg / Bredd Hängdel";
+        body.innerHTML = `
+          <div class="flex items-center justify-between">
+            <span class="text-slate-300">Bredd Hängdel:</span>
+            <div class="flex items-center gap-1">
+              <button onclick="adjustParam('mainWidth', -1)" class="w-6 h-6 bg-slate-800 hover:bg-slate-700 text-white rounded font-mono">-</button>
+              <span class="font-mono font-bold text-emerald-400 px-1">${state.mainWidth} cm</span>
+              <button onclick="adjustParam('mainWidth', 1)" class="w-6 h-6 bg-slate-800 hover:bg-slate-700 text-white rounded font-mono">+</button>
+            </div>
+          </div>
+          <div class="flex justify-between text-[11px] text-slate-400 font-mono">
+            <span>Skotorn (höger): <strong class="text-amber-400">${state.towerWidth} cm</strong></span>
+            <span>Hänghöjd: <strong class="text-emerald-400">${state.hangingHeight} cm</strong></span>
+          </div>
+        `;
+      } else if (selectedSectionKey === 'top') {
+        title.textContent = "Toppsektion (Hatthyllor)";
+        body.innerHTML = `
+          <div class="flex items-center justify-between">
+            <span class="text-slate-300">Total Topphöjd:</span>
+            <div class="flex items-center gap-1">
+              <button onclick="adjustParam('topHeight', -1)" class="w-6 h-6 bg-slate-800 hover:bg-slate-700 text-white rounded font-mono">-</button>
+              <span class="font-mono font-bold text-indigo-400 px-1">${state.topHeight} cm</span>
+              <button onclick="adjustParam('topHeight', 1)" class="w-6 h-6 bg-slate-800 hover:bg-slate-700 text-white rounded font-mono">+</button>
+            </div>
+          </div>
+          <div class="text-[11px] text-slate-400 font-mono">
+            ${state.numTopShelves} hyllplan à <strong class="text-indigo-300">${state.topSlotHeight} cm</strong> fackhöjd.
+          </div>
+        `;
+      } else if (selectedSectionKey === 'bottom') {
+        title.textContent = "Bottensektion (Skoförvaring)";
+        body.innerHTML = `
+          <div class="flex items-center justify-between">
+            <span class="text-slate-300">Total Skohöjd:</span>
+            <div class="flex items-center gap-1">
+              <button onclick="adjustParam('bottomHeight', -1)" class="w-6 h-6 bg-slate-800 hover:bg-slate-700 text-white rounded font-mono">-</button>
+              <span class="font-mono font-bold text-rose-400 px-1">${state.bottomHeight} cm</span>
+              <button onclick="adjustParam('bottomHeight', 1)" class="w-6 h-6 bg-slate-800 hover:bg-slate-700 text-white rounded font-mono">+</button>
+            </div>
+          </div>
+          <div class="text-[11px] text-slate-400 font-mono">
+            ${state.numShoeShelves} hyllplan à <strong class="text-rose-300">${state.shoeSlotHeight} cm</strong> fackhöjd.
+          </div>
+        `;
+      } else {
+        title.textContent = "Skotorn Höger";
+        body.innerHTML = `
+          <div class="flex items-center justify-between">
+            <span class="text-slate-300">Bredd Skotorn:</span>
+            <span class="font-mono font-bold text-amber-400">${state.towerWidth} cm</span>
+          </div>
+          <div class="text-[11px] text-slate-400 font-mono">
+            Höjd: <strong>${state.hangingHeight} cm</strong> (${state.numTowerShelves} hyllplan).
+          </div>
+        `;
+      }
+    }
+
+    window.adjustParam = function(param, delta) {
+      if (param === 'mainWidth') {
+        const val = Math.max(70, Math.min(122, state.mainWidth + delta));
+        sliderMainWidth.value = val;
+        numMainWidth.value = val;
+      } else if (param === 'topHeight') {
+        const val = Math.max(35, Math.min(100, state.topHeight + delta));
+        sliderTopHeight.value = val;
+        numTopHeight.value = val;
+      } else if (param === 'bottomHeight') {
+        const val = Math.max(20, Math.min(60, state.bottomHeight + delta));
+        sliderBottomHeight.value = val;
+        numBottomHeight.value = val;
+      }
+      onParameterChange();
+    };
+
+    function setupDoorButtons() {
+      document.getElementById('btnDoorClosed').addEventListener('click', () => {
+        doorsVisible = true;
+        targetDoorLeftX = doorClosedLeftX;
+        targetDoorRightX = doorClosedRightX;
+        showToast('Spegeldörrarna stängda');
+      });
+
+      document.getElementById('btnDoorLeft').addEventListener('click', () => {
+        doorsVisible = true;
+        targetDoorLeftX = doorClosedRightX;
+        targetDoorRightX = doorClosedRightX;
+        showToast('Vänster dörr inskjuten');
+      });
+
+      document.getElementById('btnDoorRight').addEventListener('click', () => {
+        doorsVisible = true;
+        targetDoorLeftX = doorClosedLeftX;
+        targetDoorRightX = doorClosedLeftX;
+        showToast('Höger dörr inskjuten');
+      });
+
+      document.getElementById('btnDoorHide').addEventListener('click', () => {
+        doorsVisible = !doorsVisible;
+        if (doorLeftGroup) doorLeftGroup.visible = doorsVisible;
+        if (doorRightGroup) doorRightGroup.visible = doorsVisible;
+        showToast(doorsVisible ? 'Dörrar visas' : 'Dörrar dolda');
+      });
+    }
+
+    function setupControlButtons() {
+      document.getElementById('btnToggleSectionDims').addEventListener('click', () => {
+        isSectionDimsVisible = !isSectionDimsVisible;
+        sectionDimensionGroup.visible = isSectionDimsVisible;
+        showToast(isSectionDimsVisible ? 'Sektionsmått visas' : 'Sektionsmått dolda');
+      });
+
+      document.getElementById('btnToggleDims').addEventListener('click', () => {
+        isOuterDimsVisible = !isOuterDimsVisible;
+        outerDimensionGroup.visible = isOuterDimsVisible;
+        showToast(isOuterDimsVisible ? 'Yttermått visas' : 'Yttermått dolda');
+      });
+
+      document.getElementById('btnToggleLight').addEventListener('click', () => {
+        isLightOn = !isLightOn;
+        if (ledLight) ledLight.intensity = isLightOn ? 1.2 : 0.0;
+        if (ledMesh) ledMesh.material.emissiveIntensity = isLightOn ? 1.5 : 0.0;
+        showToast(isLightOn ? 'LED-belysning tänd' : 'LED-belysning släckt');
+      });
+
+      document.getElementById('btnResetCamera').addEventListener('click', () => {
+        cameraRadius = 3.8;
+        cameraTheta = 0;
+        cameraPhi = Math.PI / 2.25;
+        updateCameraPosition();
+        showToast('Kameravy centrerad');
+      });
+    }
+
+    function onWindowResize() {
+      if (!renderer || !camera || !container3d) return;
+      const width = container3d.clientWidth;
+      const height = container3d.clientHeight;
+      if (width === 0 || height === 0) return;
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+      renderer.setSize(width, height);
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+
+      if (doorLeftGroup) {
+        doorLeftGroup.position.x += (targetDoorLeftX - doorLeftGroup.position.x) * 0.12;
+        doorLeftGroup.visible = doorsVisible;
+      }
+      if (doorRightGroup) {
+        doorRightGroup.position.x += (targetDoorRightX - doorRightGroup.position.x) * 0.12;
+        doorRightGroup.visible = doorsVisible;
+      }
+
+      renderer.render(scene, camera);
+    }
+
+    // ==========================================
+    // 4. PROJEKTFIL (.lu3d) SPARA OCH LADDA
+    // ==========================================
+    document.getElementById('btnSaveJson').addEventListener('click', () => {
+      const exportData = {
+        version: "1.0",
+        appName: "Platsbyggd Nischgarderob 3D",
+        createdBy: "Jonas Lund 2026",
+        exportDate: new Date().toISOString(),
+        state: { ...state }
+      };
+
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportData, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", `garderob_konfiguration_${state.totalWidth}x${state.totalHeight}cm.lu3d`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+
+      showToast('Konfiguration sparad som .lu3d-fil!', 'fa-file-circle-check');
+    });
+
+    const fileInput = document.getElementById('fileInput');
+    document.getElementById('btnLoadJson').addEventListener('click', () => {
+      fileInput.click();
+    });
+
+    fileInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        try {
+          const imported = JSON.parse(event.target.result);
+          if (imported && imported.state) {
+            Object.assign(state, imported.state);
+            recalculate();
+            syncControlsFromState();
+            renderSectionCards();
+            rebuild3DWardrobe();
+            renderDynamicCadSvg();
+            renderCutListTable();
+            showToast('Fil (.lu3d) inläst! Alla mått uppdaterade.', 'fa-folder-check');
+          } else {
+            throw new Error('Ogiltigt filformat');
+          }
+        } catch (err) {
+          showToast('Kunde inte läsa in filen: ' + err.message, 'fa-triangle-exclamation', true);
+        }
+      };
+      reader.readAsText(file);
+      fileInput.value = '';
+    });
+
+    // ==========================================
+    // 5. DYNAMISK 2D CAD RITNING (SVG)
+    // ==========================================
+    function renderDynamicCadSvg() {
+      const svg = document.getElementById('blueprintSvg');
+      if (!svg) return;
+
+      const scale = 3.6;
+      const originX = 220;
+      const originY = 120;
+      const W_px = state.totalWidth * scale;
+      const H_px = state.totalHeight * scale;
+      const floorY = originY + H_px;
+
+      const mainW_px = state.mainWidth * scale;
+      const towerW_px = state.towerWidth * scale;
+      const divX = originX + mainW_px;
+
+      const topH_px = state.topHeight * scale;
+      const botH_px = state.bottomHeight * scale;
+      const hangH_px = state.hangingHeight * scale;
+
+      const topBottomY = originY + topH_px;
+      const botTopY = floorY - botH_px;
+
+      let topShelvesSvg = '';
+      const topSpacing_px = topH_px / state.numTopShelves;
+      for (let i = 1; i <= state.numTopShelves; i++) {
+        const sy = originY + (i * topSpacing_px);
+        topShelvesSvg += `<rect x="${originX}" y="${sy - 4}" width="${mainW_px}" height="8" fill="#334155" stroke="#94a3b8" stroke-width="1" />`;
+      }
+
+      let towerShelvesSvg = '';
+      const towerStep_px = hangH_px / (state.numTowerShelves + 1);
+      for (let s = 1; s <= state.numTowerShelves; s++) {
+        const sy = botTopY - (s * towerStep_px);
+        towerShelvesSvg += `<rect x="${divX}" y="${sy - 3}" width="${towerW_px}" height="6" fill="#334155" stroke="#94a3b8" stroke-width="0.8" />`;
+      }
+      for (let ts = 1; ts <= state.numTopShelves; ts++) {
+        const sy = originY + (ts * topSpacing_px);
+        towerShelvesSvg += `<rect x="${divX}" y="${sy - 4}" width="${towerW_px}" height="6" fill="#334155" stroke="#94a3b8" stroke-width="0.8" />`;
+      }
+
+      let shoeShelvesSvg = '';
+      const shoeStep_px = botH_px / state.numShoeShelves;
+      for (let sh = 1; sh <= state.numShoeShelves; sh++) {
+        const sy = floorY - (sh * shoeStep_px);
+        shoeShelvesSvg += `<rect x="${originX}" y="${sy - 4}" width="${W_px}" height="8" fill="#334155" stroke="#fb7185" stroke-width="1.2" />`;
+      }
+
+      svg.innerHTML = `
+        <defs>
+          <pattern id="cadGrid" width="25" height="25" patternUnits="userSpaceOnUse">
+            <path d="M 25 0 L 0 0 0 25" fill="none" stroke="#1e293b" stroke-width="0.8" />
+          </pattern>
+          <marker id="mArrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 1.5 L 10 5 L 0 8.5 z" fill="#38bdf8" />
+          </marker>
+          <marker id="mArrowEmerald" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 1.5 L 10 5 L 0 8.5 z" fill="#34d399" />
+          </marker>
+          <marker id="mArrowAmber" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 1.5 L 10 5 L 0 8.5 z" fill="#fbbf24" />
+          </marker>
+          <marker id="mArrowRose" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 1.5 L 10 5 L 0 8.5 z" fill="#fb7185" />
+          </marker>
+        </defs>
+
+        <rect width="950" height="1150" fill="url(#cadGrid)" />
+        <rect x="25" y="25" width="900" height="1100" fill="none" stroke="#475569" stroke-width="1.5" />
+        <rect x="30" y="30" width="890" height="1090" fill="none" stroke="#334155" stroke-width="0.8" />
+
+        <!-- Titelblock -->
+        <g transform="translate(560, 1020)">
+          <rect width="350" height="90" fill="#090d16" stroke="#475569" stroke-width="1" />
+          <line x1="0" y1="30" x2="350" y2="30" stroke="#334155" stroke-width="1" />
+          <line x1="0" y1="60" x2="350" y2="60" stroke="#334155" stroke-width="1" />
+          <line x1="175" y1="30" x2="175" y2="90" stroke="#334155" stroke-width="1" />
+          <text x="15" y="20" fill="#f8fafc" font-size="11" font-weight="bold">PLATSB الأهGGAD NISCHGARDEROB</text>
+          <text x="15" y="48" fill="#94a3b8" font-size="9.5">NISCH: ${state.totalWidth * 10} × ${state.totalHeight * 10} × ${state.totalDepth * 10} mm</text>
+          <text x="190" y="48" fill="#94a3b8" font-size="9.5">MONTAGE: DIREKT MOT GOLV</text>
+          <text x="15" y="78" fill="#34d399" font-size="9.5">INGEN TRÄSOCKEL / FOT</text>
+          <text x="190" y="78" fill="#38bdf8" font-size="9.5">SPEGELSKJUTDÖRRAR</text>
+        </g>
+
+        <!-- Tak & Golv referens -->
+        <line x1="160" y1="${originY}" x2="760" y2="${originY}" stroke="#64748b" stroke-dasharray="6,4" stroke-width="1.5" />
+        <text x="160" y="${originY - 8}" fill="#94a3b8" font-size="11">TAK: ${state.totalWidth} cm</text>
+
+        <line x1="160" y1="${floorY}" x2="760" y2="${floorY}" stroke="#64748b" stroke-dasharray="6,4" stroke-width="1.5" />
+        <text x="160" y="${floorY + 18}" fill="#94a3b8" font-size="11">GOLV: Befintligt rumsunderlag (${state.floorWidth} cm mellan lister)</text>
+
+        <!-- Garderobsram -->
+        <rect x="${originX}" y="${originY}" width="${W_px}" height="${H_px}" fill="#0f172a" fill-opacity="0.4" stroke="#94a3b8" stroke-width="2" />
+
+        <!-- Skiljevägg -->
+        <rect x="${divX}" y="${topBottomY}" width="8" height="${hangH_px}" fill="#475569" stroke="#64748b" stroke-width="1" />
+
+        <!-- Hyllplan -->
+        ${topShelvesSvg}
+        ${towerShelvesSvg}
+        ${shoeShelvesSvg}
+
+        <!-- Kroklist (6 st hängkrokar) -->
+        <line x1="${originX + 15}" y1="${topBottomY + 16}" x2="${divX - 15}" y2="${topBottomY + 16}" stroke="#94a3b8" stroke-width="3" />
+        <g stroke="#38bdf8" stroke-width="2" fill="none">
+          <path d="M ${originX + 30} ${topBottomY + 16} l 0 10 a 4 4 0 0 0 6 0" />
+          <path d="M ${originX + mainW_px*0.25} ${topBottomY + 16} l 0 10 a 4 4 0 0 0 6 0" />
+          <path d="M ${originX + mainW_px*0.45} ${topBottomY + 16} l 0 10 a 4 4 0 0 0 6 0" />
+          <path d="M ${originX + mainW_px*0.65} ${topBottomY + 16} l 0 10 a 4 4 0 0 0 6 0" />
+          <path d="M ${originX + mainW_px*0.82} ${topBottomY + 16} l 0 10 a 4 4 0 0 0 6 0" />
+        </g>
+
+        <!-- Klädstång för galgar (Ø25 mm) & galgar -->
+        <line x1="${originX + 15}" y1="${topBottomY + 55}" x2="${divX - 15}" y2="${topBottomY + 55}" stroke="#f1f5f9" stroke-width="5" stroke-linecap="round" />
+        <g stroke="#f59e0b" stroke-width="1.5" fill="none">
+          <path d="M ${originX + 70} ${topBottomY + 55} l -25 35 l 50 0 z" />
+          <path d="M ${originX + mainW_px*0.45} ${topBottomY + 55} l -25 35 l 50 0 z" />
+          <path d="M ${originX + mainW_px*0.75} ${topBottomY + 55} l -25 35 l 50 0 z" />
+        </g>
+
+        <!-- Sektionsmärken -->
+        <rect x="${originX + 15}" y="${originY + 20}" width="280" height="34" rx="6" fill="#1e293b" stroke="#818cf8" stroke-width="1" />
+        <text x="${originX + 25}" y="${originY + 42}" fill="#c7d2fe" font-size="11" font-weight="bold">
+          Hatthyllor: B: ${state.mainWidth} × H: ${state.topSlotHeight} × D: ${state.innerDepth} cm
+        </text>
+
+        <rect x="${originX + 20}" y="${topBottomY + 105}" width="320" height="52" rx="8" fill="#0f172a" stroke="#34d399" stroke-width="1.5" />
+        <text x="${originX + 35}" y="${topBottomY + 126}" fill="#34d399" font-size="11.5" font-weight="bold">
+          HÄNGDEL: B: ${state.mainWidth} × H: ${state.hangingHeight} × D: ${state.innerDepth} cm
+        </text>
+        <text x="${originX + 35}" y="${topBottomY + 143}" fill="#94a3b8" font-size="9.5">
+          Både hängkrokar (6 st) och klädstång för galgar
+        </text>
+
+        <rect x="${divX + 6}" y="${topBottomY + 50}" width="${Math.max(65, towerW_px - 12)}" height="60" rx="4" fill="#1e293b" stroke="#fbbf24" stroke-width="1" />
+        <text x="${divX + towerW_px/2}" y="${topBottomY + 72}" fill="#fbbf24" font-size="10" font-weight="bold" text-anchor="middle">SKOTORN</text>
+        <text x="${divX + towerW_px/2}" y="${topBottomY + 88}" fill="#fde68a" font-size="9" text-anchor="middle">B: ${state.towerWidth} cm</text>
+        <text x="${divX + towerW_px/2}" y="${topBottomY + 101}" fill="#94a3b8" font-size="8" text-anchor="middle">H: ${state.hangingHeight} cm</text>
+
+        <rect x="${originX + 15}" y="${botTopY + 10}" width="320" height="34" rx="4" fill="#1e293b" stroke="#fb7185" stroke-width="1" />
+        <text x="${originX + 25}" y="${botTopY + 31}" fill="#fda4af" font-size="11" font-weight="bold">
+          Skohyllor: B: ${state.floorWidth} × H: ${state.bottomHeight} × D: ${state.innerDepth} cm
+        </text>
+
+        <!-- Tak LED -->
+        <rect x="${originX + 10}" y="${originY + 6}" width="${W_px - 20}" height="8" rx="3" fill="#fef08a" opacity="0.9" />
+        <text x="${originX + W_px/2}" y="${originY + 22}" fill="#fef08a" font-size="10" text-anchor="middle" font-weight="bold">✦ Lysen - rörelsesensor (LED takprofil)</text>
+
+        <!-- Måttkedjor -->
+        <g transform="translate(100, 0)">
+          <line x1="0" y1="${originY}" x2="0" y2="${floorY}" stroke="#38bdf8" stroke-width="2" marker-start="url(#mArrow)" marker-end="url(#mArrow)" />
+          <line x1="-15" y1="${originY}" x2="115" y2="${originY}" stroke="#475569" stroke-width="0.8" />
+          <line x1="-15" y1="${floorY}" x2="115" y2="${floorY}" stroke="#475569" stroke-width="0.8" />
+          <text x="-12" y="${originY + H_px/2}" fill="#38bdf8" font-size="14" font-weight="bold" transform="rotate(-90 -12 ${originY + H_px/2})" text-anchor="middle">
+            TOTALHÖJD: ${state.totalHeight} cm
+          </text>
+        </g>
+
+        <g transform="translate(155, 0)">
+          <line x1="0" y1="${originY}" x2="0" y2="${topBottomY}" stroke="#818cf8" stroke-width="1.5" marker-start="url(#mArrow)" marker-end="url(#mArrow)" />
+          <text x="-10" y="${originY + topH_px/2}" fill="#818cf8" font-size="11" font-weight="bold" transform="rotate(-90 -10 ${originY + topH_px/2})" text-anchor="middle">
+            Topp: ${state.topHeight} cm
+          </text>
+
+          <line x1="0" y1="${topBottomY}" x2="0" y2="${botTopY}" stroke="#34d399" stroke-width="1.5" marker-start="url(#mArrowEmerald)" marker-end="url(#mArrowEmerald)" />
+          <text x="-10" y="${topBottomY + hangH_px/2}" fill="#34d399" font-size="12" font-weight="bold" transform="rotate(-90 -10 ${topBottomY + hangH_px/2})" text-anchor="middle">
+            Häng: ${state.hangingHeight} cm
+          </text>
+
+          <line x1="0" y1="${botTopY}" x2="0" y2="${floorY}" stroke="#fb7185" stroke-width="1.5" marker-start="url(#mArrowRose)" marker-end="url(#mArrowRose)" />
+          <text x="-10" y="${botTopY + botH_px/2}" fill="#fb7185" font-size="11" font-weight="bold" transform="rotate(-90 -10 ${botTopY + botH_px/2})" text-anchor="middle">
+            Sko: ${state.bottomHeight} cm
+          </text>
+        </g>
+
+        <g transform="translate(0, 65)">
+          <line x1="${originX}" y1="0" x2="${originX + W_px}" y2="0" stroke="#38bdf8" stroke-width="1.8" marker-start="url(#mArrow)" marker-end="url(#mArrow)" />
+          <line x1="${originX}" y1="-10" x2="${originX}" y2="50" stroke="#475569" stroke-width="0.8" />
+          <line x1="${originX + W_px}" y1="-10" x2="${originX + W_px}" y2="50" stroke="#475569" stroke-width="0.8" />
+          <text x="${originX + W_px/2}" y="-8" fill="#38bdf8" font-size="13" font-weight="bold" text-anchor="middle">
+            TOTALBREDD TAK: ${state.totalWidth} cm
+          </text>
+        </g>
+
+        <g transform="translate(0, 1060)">
+          <line x1="${originX}" y1="0" x2="${divX}" y2="0" stroke="#34d399" stroke-width="1.5" marker-start="url(#mArrowEmerald)" marker-end="url(#mArrowEmerald)" />
+          <text x="${originX + mainW_px/2}" y="-6" fill="#34d399" font-size="11.5" font-weight="bold" text-anchor="middle">
+            HUVUDDEL: ${state.mainWidth} cm
+          </text>
+
+          <line x1="${divX}" y1="0" x2="${originX + W_px}" y2="0" stroke="#fbbf24" stroke-width="1.5" marker-start="url(#mArrowAmber)" marker-end="url(#mArrowAmber)" />
+          <text x="${divX + towerW_px/2}" y="-6" fill="#fbbf24" font-size="11.5" font-weight="bold" text-anchor="middle">
+            ${state.towerWidth} cm
+          </text>
+
+          <line x1="${originX}" y1="30" x2="${originX + W_px}" y2="30" stroke="#f59e0b" stroke-width="1.5" marker-start="url(#mArrowAmber)" marker-end="url(#mArrowAmber)" />
+          <text x="${originX + W_px/2}" y="46" fill="#f59e0b" font-size="10.5" font-weight="bold" text-anchor="middle">
+            GOLV MELLAN LISTER: ${state.floorWidth} cm
+          </text>
+        </g>
+      `;
+    }
+
+    // ==========================================
+    // 6. DYNAMISK KAPLISTA (HTML-TABELL)
+    // ==========================================
+    function renderCutListTable() {
+      const tbody = document.getElementById('cutListTableBody');
+      if (!tbody) return;
+
+      const mainW_mm = state.mainWidth * 10;
+      const towerW_mm = state.towerWidth * 10;
+      const floorW_mm = state.floorWidth * 10;
+      const hangH_mm = state.hangingHeight * 10;
+      const inD_mm = state.innerDepth * 10;
+      const doorW_mm = Math.round((state.totalWidth / 2 + 3.5) * 10);
+      const doorH_mm = (state.totalHeight - 3.5) * 10;
+
+      const rows = [
+        {
+          name: `Hatthyllor (${state.numTopShelves} st)`,
+          w: mainW_mm,
+          h: 18,
+          d: inD_mm,
+          qty: state.numTopShelves,
+          note: `Topphyllplan. Fackhöjd: ${state.topSlotHeight * 10} mm.`
+        },
+        {
+          name: 'Vertikal Skiljevägg',
+          w: inD_mm,
+          h: hangH_mm,
+          d: 18,
+          qty: 1,
+          note: `Delar hängdel (${state.mainWidth} cm) och skotorn (${state.towerWidth} cm).`
+        },
+        {
+          name: 'Kroklist (Melaminlist med hängkrokar)',
+          w: mainW_mm,
+          h: 55,
+          d: 18,
+          qty: 1,
+          note: 'Monterad under lägsta hatthyllan med 6 st robusta metallkrokar.'
+        },
+        {
+          name: 'Klädstång för galgar (Ø25 mm stål)',
+          w: mainW_mm - 16,
+          h: 'Ø25',
+          d: '-',
+          qty: 1,
+          note: `Kromat stålrör inklusive 2 st ändfästen för klädgalgar.`
+        },
+        {
+          name: `Skotorn Hyllplan (Höger)`,
+          w: towerW_mm,
+          h: 18,
+          d: inD_mm,
+          qty: state.numTowerShelves,
+          note: `${state.numTowerShelves} hyllplan. Fackhöjd: ca ${Math.round(state.towerSlotHeight * 10)} mm.`
+        },
+        {
+          name: `Skohyllor (Botten)`,
+          w: floorW_mm,
+          h: 18,
+          d: inD_mm,
+          qty: state.numShoeShelves,
+          note: `Monteras direkt mot nischväggar utan underliggande sockel.`
+        },
+        {
+          name: 'Spegelskjutdörrar (Paket)',
+          w: doorW_mm,
+          h: doorH_mm,
+          d: 24,
+          qty: 2,
+          note: 'Topphängt system med spegelglas & integrerat handtag.'
+        }
+      ];
+
+      tbody.innerHTML = rows.map(r => `
+        <tr class="hover:bg-slate-800/40">
+          <td class="p-3 font-sans font-medium text-white">${r.name}</td>
+          <td class="p-3 text-indigo-400 font-bold">${r.w}</td>
+          <td class="p-3 text-slate-400">${r.h}</td>
+          <td class="p-3 text-sky-400">${r.d}</td>
+          <td class="p-3 font-bold">${r.qty}</td>
+          <td class="p-3 font-sans text-xs text-slate-300">${r.note}</td>
+        </tr>
+      `).join('');
+    }
+
+    // ==========================================
+    // 7. DYNAMISK PDF-EXPORT (JSPDF)
+    // ==========================================
+    document.getElementById('downloadPdfBtn').addEventListener('click', () => {
+      try {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+
+        doc.setFillColor(15, 23, 42);
+        doc.rect(0, 0, 210, 297, 'F');
+
+        doc.setDrawColor(51, 65, 85);
+        doc.setLineWidth(0.8);
+        doc.rect(8, 8, 194, 281);
+
+        doc.setTextColor(248, 250, 252);
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(15);
+        doc.text('BYGGRITNING: PLATSB الأهGGAD NISCHGARDEROB', 14, 18);
+
+        doc.setFontSize(8.5);
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(148, 163, 184);
+        doc.text('Dynamiska sektionsmått (Bredd × Höjd × Djup) | Direkt mot golv utan sockel', 14, 24);
+
+        const cards = [
+          { l: 'TOTALHÖJD', v: `${state.totalHeight * 10} mm`, c: [56, 189, 248] },
+          { l: 'BREDD TAK', v: `${state.totalWidth * 10} mm`, c: [251, 191, 36] },
+          { l: 'BREDD GOLV', v: `${state.floorWidth * 10} mm`, c: [253, 224, 71] },
+          { l: 'NISCHDJUP', v: `${state.totalDepth * 10} mm`, c: [52, 211, 153] }
+        ];
+
+        cards.forEach((card, i) => {
+          const cx = 14 + (i * 46);
+          doc.setFillColor(30, 41, 59);
+          doc.roundedRect(cx, 28, 42, 14, 1.5, 1.5, 'F');
+          doc.setFontSize(7);
+          doc.setTextColor(148, 163, 184);
+          doc.text(card.l, cx + 4, 33);
+          doc.setFont('helvetica', 'bold');
+          doc.setFontSize(10);
+          doc.setTextColor(card.c[0], card.c[1], card.c[2]);
+          doc.text(card.v, cx + 4, 39);
+        });
+
+        const gx = 22;
+        const gy = 48;
+        const gw = 88;
+        const gh = 158;
+
+        doc.setDrawColor(148, 163, 184);
+        doc.setLineWidth(0.6);
+        doc.rect(gx, gy, gw, gh);
+
+        doc.setDrawColor(56, 189, 248);
+        doc.setLineWidth(0.8);
+        doc.line(gx - 4, gy + gh, gx + gw + 4, gy + gh);
+
+        const divX_mm = gx + (gw * (state.mainWidth / state.totalWidth));
+        const topH_pdf = gh * (state.topHeight / state.totalHeight);
+        const botH_pdf = gh * (state.bottomHeight / state.totalHeight);
+        const hangH_pdf = gh * (state.hangingHeight / state.totalHeight);
+
+        doc.setDrawColor(100, 116, 139);
+        doc.setLineWidth(0.5);
+        doc.line(divX_mm, gy + topH_pdf, divX_mm, gy + gh - botH_pdf);
+
+        doc.setDrawColor(129, 140, 248);
+        const topStep_pdf = topH_pdf / state.numTopShelves;
+        for (let i = 1; i <= state.numTopShelves; i++) {
+          const sy = gy + (i * topStep_pdf);
+          doc.line(gx, sy, divX_mm, sy);
+        }
+
+        doc.setDrawColor(248, 250, 252);
+        doc.setLineWidth(0.8);
+        doc.line(gx + 3, gy + topH_pdf + 6, divX_mm - 3, gy + topH_pdf + 6);
+
+        doc.setDrawColor(251, 113, 133);
+        const shoeStep_pdf = botH_pdf / state.numShoeShelves;
+        for (let sh = 1; sh <= state.numShoeShelves; sh++) {
+          const sy = gy + gh - (sh * shoeStep_pdf);
+          doc.line(gx, sy, gx + gw, sy);
+        }
+
+        doc.setDrawColor(251, 191, 36);
+        doc.setLineWidth(0.4);
+        const towerStep_pdf = hangH_pdf / (state.numTowerShelves + 1);
+        for (let st = 1; st <= state.numTowerShelves; st++) {
+          const sy = gy + topH_pdf + (st * towerStep_pdf);
+          doc.line(divX_mm, sy, gx + gw, sy);
+        }
+
+        doc.setFontSize(6);
+        doc.setFont('helvetica', 'bold');
+        
+        doc.setTextColor(129, 140, 248);
+        doc.text(`Hatthyllor: B: ${state.mainWidth} x H: ${state.topSlotHeight} x D: ${state.innerDepth} cm`, gx + 3, gy + 8);
+        
+        doc.setTextColor(52, 211, 153);
+        doc.text(`HANGDEL: B: ${state.mainWidth} x H: ${state.hangingHeight} x D: ${state.innerDepth} cm`, gx + 3, gy + topH_pdf + (hangH_pdf/2));
+
+        doc.setTextColor(251, 191, 36);
+        doc.text(`SKOR: B: ${state.towerWidth} x H: ${state.hangingHeight}`, divX_mm + 1, gy + topH_pdf + (hangH_pdf/2));
+
+        doc.setTextColor(251, 113, 133);
+        doc.text(`Skor: B: ${state.floorWidth} x H: ${state.bottomHeight} x D: ${state.innerDepth} cm`, gx + 3, gy + gh - 4);
+
+        const rx = 118;
+        doc.setFontSize(9.5);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(248, 250, 252);
+        doc.text('KALKYLERADE SEKTIONSMÅTT (B x H x D)', rx, 52);
+
+        doc.setFontSize(7.5);
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(203, 213, 225);
+
+        const specs = [
+          `1. TOPPSEKTION (Hatthyllor):`,
+          `   • B: ${state.mainWidth * 10} mm × H: ${Math.round(state.topSlotHeight * 10)} mm × D: ${state.innerDepth * 10} mm (${state.numTopShelves} st).`,
+          `2. KLADHANGDEL (Krokar + Galgstang):`,
+          `   • B: ${state.mainWidth * 10} mm × H: ${state.hangingHeight * 10} mm × D: ${state.innerDepth * 10} mm.`,
+          `   • 6 st robusta hangkrokar monterade pa kroklist.`,
+          `   • Stalstang O25 mm for kladgalgar med andfasten.`,
+          `3. HOGER SKOTORN (Smalfack):`,
+          `   • B: ${state.towerWidth * 10} mm × H: ${state.hangingHeight * 10} mm × D: ${state.innerDepth * 10} mm (${state.numTowerShelves} hyllor).`,
+          `4. BOTTENSEKTION (Skoforvaring):`,
+          `   • B: ${state.floorWidth * 10} mm × H: ${state.bottomHeight * 10} mm × D: ${state.innerDepth * 10} mm (${state.numShoeShelves} plan).`,
+          `5. SPEGELSKJUTDORRAR & GOLV:`,
+          `   • Topphangda spegeldorrar direkt mot golv utan sockel.`,
+          `   • Reflekterande spegelglas med silverprofiler.`
+        ];
+
+        let sy = 59;
+        specs.forEach(s => {
+          doc.text(s, rx, sy);
+          sy += 5.5;
+        });
+
+        doc.setFontSize(9.5);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(248, 250, 252);
+        doc.text('KAPLISTA & MATERIALSPECIFIKATION (18 mm Vit Melamin)', 14, 214);
+
+        doc.setFillColor(30, 41, 59);
+        doc.rect(14, 217, 182, 6, 'F');
+        doc.setFontSize(6.5);
+        doc.setTextColor(148, 163, 184);
+        doc.text('SEKTION / KOMPONENT', 18, 221);
+        doc.text('BREDD (mm)', 75, 221);
+        doc.text('HOJD (mm)', 105, 221);
+        doc.text('DJUP (mm)', 132, 221);
+        doc.text('ANTAL', 158, 221);
+        doc.text('NOTERING', 172, 221);
+
+        const pdfRows = [
+          [`Hatthyllor (${state.numTopShelves} st)`, `${state.mainWidth * 10}`, '18', `${state.innerDepth * 10}`, `${state.numTopShelves} st`, `Fackhojd ${state.topSlotHeight * 10} mm`],
+          ['Vertikal Skiljevagg', `${state.innerDepth * 10}`, `${state.hangingHeight * 10}`, '18', '1 st', `Mellan handdel & torn`],
+          ['Kroklist (Melaminlist)', `${state.mainWidth * 10}`, '55', '18', '1 st', '6 st jackkrokar i metall'],
+          ['Kladstang for galgar', `${state.mainWidth * 10 - 16}`, 'O25', '-', '1 st', 'Kromat stalror + fasten'],
+          [`Skotorn Hyllplan`, `${state.towerWidth * 10}`, '18', `${state.innerDepth * 10}`, `${state.numTowerShelves} st`, `Fackhojd ~${Math.round(state.towerSlotHeight * 10)} mm`],
+          [`Skohyllor (Botten)`, `${state.floorWidth * 10}`, '18', `${state.innerDepth * 10}`, `${state.numShoeShelves} st`, `Direkt mot rumsunderlag`],
+          ['Spegelskjutdorrar', `${Math.round((state.totalWidth / 2 + 3.5) * 10)}`, `${(state.totalHeight - 3.5) * 10}`, '24', '2 st', 'Topphangt system']
+        ];
+
+        let rY = 227;
+        doc.setTextColor(226, 232, 240);
+        pdfRows.forEach((r, idx) => {
+          if (idx % 2 === 1) {
+            doc.setFillColor(24, 33, 47);
+            doc.rect(14, rY - 3.2, 182, 4.8, 'F');
+          }
+          doc.text(r[0], 18, rY);
+          doc.text(r[1], 77, rY);
+          doc.text(r[2], 107, rY);
+          doc.text(r[3], 134, rY);
+          doc.text(r[4], 160, rY);
+          doc.text(r[5], 172, rY);
+          rY += 4.8;
+        });
+
+        doc.setFontSize(6.5);
+        doc.setTextColor(100, 116, 139);
+        doc.text('Skapad av Jonas Lund 2026 | Platsbyggd Nischgarderob | Alla matt i mm om inget annat anges', 14, 285);
+
+        doc.save(`Garderob_Platsbyggd_${state.totalWidth}x${state.totalHeight}cm.pdf`);
+        showToast('PDF-ritning nedladdad!', 'fa-file-arrow-down');
+      } catch (err) {
+        console.error(err);
+        showToast('Kunde inte generera PDF: ' + err.message, 'fa-triangle-exclamation', true);
+      }
+    });
+
+    // Starta vid laddning
+    window.addEventListener('load', () => {
+      syncControlsFromState();
+      renderSectionCards();
+      init3D();
+      animate();
+      renderDynamicCadSvg();
+      renderCutListTable();
+    });
+  </script>
+</body>
+</html>
