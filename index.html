@@ -24,8 +24,8 @@
     .blueprint-grid {
       background-size: 20px 20px;
       background-image: 
-        linear-gradient(to right, rgba(56, 189, 248, 0.07) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(56, 189, 248, 0.07) 1px, transparent 1px);
+        linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
     }
     input[type=range] {
       accent-color: #6366f1;
@@ -35,55 +35,55 @@
     }
   </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col">
+<body class="bg-neutral-950 text-neutral-200 min-h-screen flex flex-col">
 
-  <!-- Header -->
-  <header class="bg-slate-900/90 border-b border-slate-800 backdrop-blur sticky top-0 z-30 px-3 py-2.5 sm:px-6">
+  <!-- Header i Gråskala med Färgade Knappar och Måttvärden -->
+  <header class="bg-neutral-900 border-b border-neutral-800 sticky top-0 z-30 px-3 py-2.5 sm:px-6">
     <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
       <div class="flex items-center space-x-3">
-        <div class="bg-indigo-600 text-white p-2 rounded-xl shadow-lg shadow-indigo-600/30">
+        <div class="bg-neutral-800 text-neutral-300 p-2 rounded-xl border border-neutral-700">
           <i class="fa-solid fa-ruler-combined text-lg"></i>
         </div>
         <div>
           <h1 class="text-base sm:text-lg font-bold tracking-tight text-white flex items-center gap-2">
             Platsbyggd Nischgarderob
-            <span id="headerDimBadge" class="text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+            <!-- Färgat måttvärde -->
+            <span id="headerDimBadge" class="text-xs font-semibold px-2 py-0.5 rounded-full bg-neutral-800 text-emerald-400 border border-neutral-700 font-mono">
               135 × 250 × 56.5 cm
             </span>
           </h1>
-          <p class="text-[11px] text-slate-400">Flyttbara sektioner | Spegeldörrar | CAD & Kaplista</p>
+          <p class="text-[11px] text-neutral-400">Elfa Modulsystem & Måttanpassning | Spegeldörrar | 3D & CAD</p>
         </div>
       </div>
 
-      <!-- Projekt Spara / Ladda & Export -->
+      <!-- Projekt Spara / Ladda & Export (Färgade knappar) -->
       <div class="flex items-center flex-wrap gap-2">
-        <!-- Ladda fil (dold input) -->
         <input type="file" id="fileInput" accept=".lu3d,.json" class="hidden">
         
-        <button id="btnLoadJson" class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium px-3 py-1.5 rounded-xl border border-slate-700 flex items-center gap-1.5 transition">
-          <i class="fa-solid fa-folder-open text-amber-400"></i>
+        <button id="btnLoadJson" class="bg-amber-600 hover:bg-amber-500 text-white text-xs font-semibold px-3 py-1.5 rounded-xl flex items-center gap-1.5 shadow transition">
+          <i class="fa-solid fa-folder-open"></i>
           <span>Ladda fil</span>
         </button>
 
-        <button id="btnSaveJson" class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium px-3 py-1.5 rounded-xl border border-slate-700 flex items-center gap-1.5 transition">
-          <i class="fa-solid fa-floppy-disk text-indigo-400"></i>
-          <span>Spara fil (.lu3d)</span>
+        <button id="btnSaveJson" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold px-3 py-1.5 rounded-xl flex items-center gap-1.5 shadow transition">
+          <i class="fa-solid fa-floppy-disk"></i>
+          <span>Spara (.lu3d)</span>
         </button>
 
-        <!-- Nav tabs -->
-        <div class="bg-slate-900 p-0.5 rounded-xl border border-slate-800 flex text-xs font-medium">
-          <button id="tab3dBtn" class="px-2.5 py-1.5 rounded-lg bg-indigo-600 text-white transition shadow">
+        <!-- Nav flikar (Knappar) -->
+        <div class="bg-neutral-900 p-0.5 rounded-xl border border-neutral-800 flex text-xs font-medium">
+          <button id="tab3dBtn" class="px-2.5 py-1.5 rounded-lg bg-indigo-600 text-white transition shadow font-semibold">
             <i class="fa-solid fa-cube mr-1"></i>3D
           </button>
-          <button id="tab2dBtn" class="px-2.5 py-1.5 rounded-lg text-slate-400 hover:text-white transition">
+          <button id="tab2dBtn" class="px-2.5 py-1.5 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-neutral-200 transition">
             <i class="fa-solid fa-compass-drafting mr-1"></i>CAD
           </button>
-          <button id="tabCutBtn" class="px-2.5 py-1.5 rounded-lg text-slate-400 hover:text-white transition">
-            <i class="fa-solid fa-table-list mr-1"></i>Kaplista
+          <button id="tabCutBtn" class="px-2.5 py-1.5 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-neutral-200 transition">
+            <i class="fa-solid fa-table-list mr-1"></i>Elfa-lista
           </button>
         </div>
 
-        <button id="downloadPdfBtn" class="bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white text-xs font-semibold px-3 py-1.5 rounded-xl flex items-center gap-1.5 shadow-lg shadow-emerald-900/30 transition">
+        <button id="downloadPdfBtn" class="bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white text-xs font-semibold px-3 py-1.5 rounded-xl flex items-center gap-1.5 shadow transition">
           <i class="fa-solid fa-file-pdf"></i>
           <span class="hidden sm:inline">Ladda ner</span> PDF
         </button>
@@ -97,142 +97,139 @@
     <!-- 1. FLIK: 3D MODELL OCH JUSTERINGSPANEL -->
     <div id="view3d" class="flex flex-col lg:flex-row gap-5">
       
-      <!-- 3D Canvas Behållare (Definierad höjd så den syns omedelbart vid start) -->
-      <div class="relative flex-1 bg-slate-900 rounded-2xl border border-slate-800 overflow-hidden shadow-2xl h-[520px] sm:h-[600px] lg:h-[700px]">
+      <!-- 3D Canvas Behållare (Gråskala miljö) -->
+      <div class="relative flex-1 bg-neutral-900 rounded-2xl border border-neutral-800 overflow-hidden shadow-2xl h-[520px] sm:h-[600px] lg:h-[700px]">
         
-        <!-- 3D Canvas -->
         <div id="canvasContainer" class="w-full h-full cursor-grab active:cursor-grabbing"></div>
 
-        <!-- 3D Dörrkontroller Uppe till Vänster -->
+        <!-- 3D Dörrkontroller (Färgade knappar) -->
         <div class="absolute top-3 left-3 z-10 flex flex-wrap gap-1.5">
-          <div class="bg-slate-900/90 backdrop-blur border border-slate-700 rounded-xl p-1 shadow-xl flex items-center gap-1 text-xs">
-            <!-- Interaktivt Redigeringsläge Toggle -->
+          <div class="bg-neutral-900/90 backdrop-blur border border-neutral-700 rounded-xl p-1 shadow-xl flex items-center gap-1 text-xs">
             <button id="btnToggleEditMode" title="Aktivera redigeringsläge för att flytta sektioner direkt i 3D" class="px-2.5 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-semibold transition flex items-center gap-1.5 shadow">
               <i class="fa-solid fa-pen-ruler"></i>
               <span id="editModeBtnText">Redigera i 3D: AV</span>
             </button>
-            <div class="w-px h-5 bg-slate-700 my-0.5 mx-0.5"></div>
-            <button id="btnDoorClosed" title="Stäng spegeldörrarna" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-white transition">
+            <div class="w-px h-5 bg-neutral-700 my-0.5 mx-0.5"></div>
+            <button id="btnDoorClosed" title="Stäng spegeldörrarna" class="px-2.5 py-1 rounded-lg bg-sky-600 hover:bg-sky-500 text-white font-medium transition">
               <i class="fa-solid fa-door-closed mr-1"></i>Stängda
             </button>
-            <button id="btnDoorLeft" title="Öppna vänster dörr" class="px-2.5 py-1 rounded-lg bg-indigo-600/30 hover:bg-indigo-600/50 text-indigo-300 transition">
+            <button id="btnDoorLeft" title="Öppna vänster dörr" class="px-2.5 py-1 rounded-lg bg-sky-700 hover:bg-sky-600 text-white font-medium transition">
               <i class="fa-solid fa-arrow-right mr-1"></i>Skjut Vänster
             </button>
-            <button id="btnDoorRight" title="Öppna höger dörr" class="px-2.5 py-1 rounded-lg bg-indigo-600/30 hover:bg-indigo-600/50 text-indigo-300 transition">
+            <button id="btnDoorRight" title="Öppna höger dörr" class="px-2.5 py-1 rounded-lg bg-sky-700 hover:bg-sky-600 text-white font-medium transition">
               <i class="fa-solid fa-arrow-left mr-1"></i>Skjut Höger
             </button>
-            <button id="btnDoorHide" title="Dölj dörrar för att se inredningen" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-amber-300 transition">
+            <button id="btnDoorHide" title="Dölj dörrar för att se inredningen" class="px-2.5 py-1 rounded-lg bg-amber-600 hover:bg-amber-500 text-white font-medium transition">
               <i class="fa-solid fa-eye-slash mr-1"></i>Dölj Dörrar
             </button>
           </div>
         </div>
 
-        <!-- Edit Mode Banner & Guide -->
-        <div id="editModeBanner" class="hidden absolute top-14 left-1/2 transform -translate-x-1/2 z-10 bg-indigo-950/90 backdrop-blur-md border border-indigo-500/60 text-white px-4 py-1.5 rounded-full shadow-2xl flex items-center gap-2 text-xs pointer-events-none">
+        <!-- Edit Mode Banner (Gråskala med färgat mått/text) -->
+        <div id="editModeBanner" class="hidden absolute top-14 left-1/2 transform -translate-x-1/2 z-10 bg-neutral-900 border border-neutral-700 text-neutral-200 px-4 py-1.5 rounded-full shadow-2xl flex items-center gap-2 text-xs pointer-events-none">
           <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-          <span class="font-medium text-emerald-300">Redigeringsläge:</span>
-          <span class="text-slate-200">Dra i handtagen (↔️ / ↕️) i 3D eller klicka på en sektion</span>
+          <span class="font-medium text-white">Redigeringsläge:</span>
+          <span class="text-neutral-300">Dra i 3D-handtagen eller använd sifferfälten</span>
         </div>
 
         <!-- Flytande 3D Snabbinspektor i Edit Mode -->
-        <div id="editModeInspector" class="hidden absolute bottom-12 left-3 z-20 bg-slate-900/95 backdrop-blur border border-indigo-500/50 rounded-2xl p-3 shadow-2xl max-w-xs w-full text-xs">
-          <div class="flex items-center justify-between pb-2 mb-2 border-b border-slate-800">
+        <div id="editModeInspector" class="hidden absolute bottom-12 left-3 z-20 bg-neutral-900 border border-neutral-700 rounded-2xl p-3 shadow-2xl max-w-xs w-full text-xs">
+          <div class="flex items-center justify-between pb-2 mb-2 border-b border-neutral-800">
             <div class="flex items-center gap-1.5">
               <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
               <span id="inspectorTitle" class="font-bold text-white uppercase text-[11px] tracking-wider">Skiljevägg Vald</span>
             </div>
-            <span class="text-[10px] font-mono text-indigo-400 bg-indigo-500/10 px-2 py-0.5 rounded border border-indigo-500/20">3D Live</span>
+            <span class="text-[10px] font-mono text-neutral-400 bg-neutral-800 px-2 py-0.5 rounded border border-neutral-700">Elfa Modul</span>
           </div>
           <div id="inspectorBody" class="space-y-2">
-            <!-- Innehåll uppdateras dynamiskt i JavaScript -->
+            <!-- Dynamiskt innehåll -->
           </div>
         </div>
 
-        <!-- Funktionsknappar Uppe till Höger -->
+        <!-- Funktionsknappar Uppe till Höger (Färgade knappar) -->
         <div class="absolute top-3 right-3 z-10 flex flex-col gap-1.5">
-          <button id="btnToggleSectionDims" class="bg-slate-900/90 backdrop-blur border border-slate-700 px-2.5 py-1.5 rounded-xl text-emerald-400 hover:bg-slate-800 shadow text-xs font-medium flex items-center gap-1.5" title="Växla sektionsmått (B×H×D)">
+          <button id="btnToggleSectionDims" class="bg-emerald-600 hover:bg-emerald-500 text-white px-2.5 py-1.5 rounded-xl shadow text-xs font-semibold flex items-center gap-1.5 transition" title="Växla sektionsmått (B×H×D)">
             <i class="fa-solid fa-shapes"></i>
             <span class="hidden sm:inline">Mått (B×H×D)</span>
           </button>
-          <button id="btnToggleDims" class="bg-slate-900/90 backdrop-blur border border-slate-700 px-2.5 py-1.5 rounded-xl text-sky-400 hover:bg-slate-800 shadow text-xs font-medium flex items-center gap-1.5" title="Växla yttermått">
+          <button id="btnToggleDims" class="bg-sky-600 hover:bg-sky-500 text-white px-2.5 py-1.5 rounded-xl shadow text-xs font-semibold flex items-center gap-1.5 transition" title="Växla yttermått">
             <i class="fa-solid fa-ruler-combined"></i>
             <span class="hidden sm:inline">Yttermått</span>
           </button>
-          <button id="btnToggleLight" class="bg-slate-900/90 backdrop-blur border border-slate-700 px-2.5 py-1.5 rounded-xl text-yellow-300 hover:bg-slate-800 shadow text-xs font-medium flex items-center gap-1.5" title="Tänd/släck sensor-LED">
+          <button id="btnToggleLight" class="bg-amber-600 hover:bg-amber-500 text-white px-2.5 py-1.5 rounded-xl shadow text-xs font-semibold flex items-center gap-1.5 transition" title="Tänd/släck sensor-LED">
             <i class="fa-solid fa-lightbulb"></i>
             <span class="hidden sm:inline">LED-ljus</span>
           </button>
-          <button id="btnResetCamera" class="bg-slate-900/90 backdrop-blur border border-slate-700 px-2.5 py-1.5 rounded-xl text-slate-300 hover:bg-slate-800 shadow text-xs font-medium flex items-center gap-1.5" title="Återställ kameravy">
+          <button id="btnResetCamera" class="bg-neutral-800 hover:bg-neutral-700 text-neutral-200 border border-neutral-700 px-2.5 py-1.5 rounded-xl shadow text-xs font-semibold flex items-center gap-1.5 transition" title="Återställ kameravy">
             <i class="fa-solid fa-camera-rotate"></i>
             <span class="hidden sm:inline">Centrera</span>
           </button>
         </div>
 
-        <!-- Fotnot i 3D-vy -->
-        <div class="absolute bottom-3 left-3 right-3 pointer-events-none flex justify-between items-end text-[11px] text-slate-400">
-          <div class="bg-slate-900/90 backdrop-blur px-3 py-1.5 rounded-xl border border-slate-800 pointer-events-auto shadow">
-            <i class="fa-solid fa-hand-pointer mr-1 text-indigo-400"></i> Rotera med mus/finger | Scrolla för zoom
+        <!-- Fotnot i 3D-vy (Gråskala med färgat mått) -->
+        <div class="absolute bottom-3 left-3 right-3 pointer-events-none flex justify-between items-end text-[11px] text-neutral-400">
+          <div class="bg-neutral-900 px-3 py-1.5 rounded-xl border border-neutral-800 pointer-events-auto shadow">
+            Rotera med mus/finger | Scrolla för zoom
           </div>
-          <div class="bg-slate-900/90 backdrop-blur px-3 py-1.5 rounded-xl border border-slate-800 pointer-events-auto shadow flex items-center gap-2">
-            <span class="w-2 h-2 rounded-full bg-sky-400 animate-pulse"></span>
-            <span class="text-slate-300 font-mono">Reflekterande spegeldörrar | Inga svarta fötter</span>
+          <div class="bg-neutral-900 px-3 py-1.5 rounded-xl border border-neutral-800 pointer-events-auto shadow flex items-center gap-2">
+            <span class="text-neutral-400">Nisch:</span>
+            <span class="text-emerald-400 font-mono font-bold">135 × 250 cm</span>
           </div>
         </div>
 
       </div>
 
-      <!-- Höger: FLYTTBARA SEKTIONER (KONTROLLER & BERÄKNINGAR) -->
+      <!-- Höger: SEKTIONSREGLAGE & BERÄKNINGAR (Gråskala med färgade måttvärden och knappar) -->
       <div class="w-full lg:w-[420px] flex flex-col gap-4">
         
-        <!-- Interaktiva Sektionsreglage -->
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl">
-          <div class="flex items-center justify-between mb-3 border-b border-slate-800 pb-2">
-            <h2 class="text-xs font-bold uppercase tracking-wider text-indigo-400 flex items-center gap-1.5">
-              <i class="fa-solid fa-sliders text-indigo-400"></i>
-              Flytta & Anpassa Sektioner
+        <div class="bg-neutral-900 border border-neutral-800 rounded-2xl p-4 shadow-xl">
+          <div class="flex items-center justify-between mb-3 border-b border-neutral-800 pb-2">
+            <h2 class="text-xs font-bold uppercase tracking-wider text-neutral-300 flex items-center gap-1.5">
+              <i class="fa-solid fa-sliders text-neutral-400"></i>
+              Elfa Sektionsanpassning
             </h2>
-            <button id="btnResetDefaults" class="text-[10px] text-slate-400 hover:text-white px-2 py-0.5 rounded bg-slate-800 border border-slate-700 transition">
-              Återställ original
+            <button id="btnResetDefaults" class="text-xs text-white px-2.5 py-1 rounded-lg bg-neutral-800 hover:bg-neutral-700 border border-neutral-700 transition font-medium">
+              Återställ
             </button>
           </div>
 
           <div class="space-y-3.5 text-xs">
             
-            <!-- 1. Bredd-fördelning (Skiljevägg flyttbar) -->
-            <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
+            <!-- 1. Bredd-fördelning -->
+            <div class="bg-neutral-950 p-3 rounded-xl border border-neutral-800">
               <div class="flex justify-between items-center mb-1">
-                <label class="font-semibold text-slate-200 flex items-center gap-1">
-                  <i class="fa-solid fa-arrows-left-right text-emerald-400"></i>
-                  Skiljevägg / Bredd Hängdel:
+                <label class="font-medium text-neutral-300">
+                  Hängdel / Skiljevägg:
                 </label>
                 <div class="flex items-center gap-1">
-                  <input type="number" id="numMainWidth" min="70" max="122" step="1" value="112" class="w-14 bg-slate-900 border border-slate-700 rounded px-1.5 py-0.5 font-mono text-emerald-400 font-bold text-xs text-right focus:border-emerald-500 focus:outline-none">
-                  <span class="text-[11px] text-slate-400">cm</span>
+                  <!-- Måttvärde med färg -->
+                  <input type="number" id="numMainWidth" min="70" max="122" step="1" value="112" class="w-14 bg-neutral-900 border border-neutral-700 rounded px-1.5 py-0.5 font-mono text-emerald-400 font-bold text-xs text-right focus:outline-none">
+                  <span class="text-[11px] text-neutral-400">cm</span>
                 </div>
               </div>
-              <input type="range" id="sliderMainWidth" min="70" max="122" step="1" value="112" class="w-full h-1.5 bg-slate-800 rounded-lg cursor-pointer">
-              <div class="flex justify-between text-[10px] text-slate-400 font-mono mt-1">
-                <span>Hängdel: <strong id="valMainWSub" class="text-emerald-400">112 cm</strong></span>
-                <span>Skotorn (höger): <strong id="valTowerWSub" class="text-amber-400">23 cm</strong></span>
+              <input type="range" id="sliderMainWidth" min="70" max="122" step="1" value="112" class="w-full h-1.5 bg-neutral-800 rounded-lg cursor-pointer">
+              <div class="flex justify-between text-[10px] text-neutral-400 font-mono mt-1">
+                <span>Hängdel: <strong id="valMainWSub" class="text-emerald-400 font-bold">112 cm</strong></span>
+                <span>Skotorn (höger): <strong id="valTowerWSub" class="text-amber-400 font-bold">23 cm</strong></span>
               </div>
             </div>
 
-            <!-- 2. Höjd Toppsektion (Hatthyllor) -->
-            <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
+            <!-- 2. Höjd Toppsektion -->
+            <div class="bg-neutral-950 p-3 rounded-xl border border-neutral-800">
               <div class="flex justify-between items-center mb-1">
-                <label class="font-semibold text-slate-200 flex items-center gap-1">
-                  <i class="fa-solid fa-arrows-up-down text-indigo-400"></i>
+                <label class="font-medium text-neutral-300">
                   Toppsektion (Hatthyllor):
                 </label>
                 <div class="flex items-center gap-1">
-                  <input type="number" id="numTopHeight" min="35" max="100" step="1" value="75" class="w-14 bg-slate-900 border border-slate-700 rounded px-1.5 py-0.5 font-mono text-indigo-400 font-bold text-xs text-right focus:border-indigo-500 focus:outline-none">
-                  <span class="text-[11px] text-slate-400">cm</span>
+                  <!-- Måttvärde med färg -->
+                  <input type="number" id="numTopHeight" min="35" max="100" step="1" value="75" class="w-14 bg-neutral-900 border border-neutral-700 rounded px-1.5 py-0.5 font-mono text-indigo-400 font-bold text-xs text-right focus:outline-none">
+                  <span class="text-[11px] text-neutral-400">cm</span>
                 </div>
               </div>
-              <input type="range" id="sliderTopHeight" min="35" max="100" step="1" value="75" class="w-full h-1.5 bg-slate-800 rounded-lg cursor-pointer">
-              <div class="flex justify-between items-center text-[10px] text-slate-400 mt-1.5">
-                <span>Antal hatthyllplan:</span>
-                <select id="selectTopShelves" class="bg-slate-900 border border-slate-700 text-white rounded px-2 py-0.5 font-mono text-[11px]">
+              <input type="range" id="sliderTopHeight" min="35" max="100" step="1" value="75" class="w-full h-1.5 bg-neutral-800 rounded-lg cursor-pointer">
+              <div class="flex justify-between items-center text-[10px] text-neutral-400 mt-1.5">
+                <span>Antal Elfa hatthyllplan:</span>
+                <select id="selectTopShelves" class="bg-neutral-900 border border-neutral-700 text-white rounded px-2 py-0.5 font-mono text-[11px]">
                   <option value="2">2 hyllor</option>
                   <option value="3" selected>3 hyllor (original)</option>
                   <option value="4">4 hyllor</option>
@@ -240,22 +237,22 @@
               </div>
             </div>
 
-            <!-- 3. Höjd Bottensektion (Skoförvaring) -->
-            <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
+            <!-- 3. Höjd Bottensektion -->
+            <div class="bg-neutral-950 p-3 rounded-xl border border-neutral-800">
               <div class="flex justify-between items-center mb-1">
-                <label class="font-semibold text-slate-200 flex items-center gap-1">
-                  <i class="fa-solid fa-arrows-up-down text-rose-400"></i>
+                <label class="font-medium text-neutral-300">
                   Bottensektion (Skor från golv):
                 </label>
                 <div class="flex items-center gap-1">
-                  <input type="number" id="numBottomHeight" min="20" max="60" step="1" value="35" class="w-14 bg-slate-900 border border-slate-700 rounded px-1.5 py-0.5 font-mono text-rose-400 font-bold text-xs text-right focus:border-rose-500 focus:outline-none">
-                  <span class="text-[11px] text-slate-400">cm</span>
+                  <!-- Måttvärde med färg -->
+                  <input type="number" id="numBottomHeight" min="20" max="60" step="1" value="35" class="w-14 bg-neutral-900 border border-neutral-700 rounded px-1.5 py-0.5 font-mono text-rose-400 font-bold text-xs text-right focus:outline-none">
+                  <span class="text-[11px] text-neutral-400">cm</span>
                 </div>
               </div>
-              <input type="range" id="sliderBottomHeight" min="20" max="60" step="1" value="35" class="w-full h-1.5 bg-slate-800 rounded-lg cursor-pointer">
-              <div class="flex justify-between items-center text-[10px] text-slate-400 mt-1.5">
-                <span>Antal skohyllplan:</span>
-                <select id="selectShoeShelves" class="bg-slate-900 border border-slate-700 text-white rounded px-2 py-0.5 font-mono text-[11px]">
+              <input type="range" id="sliderBottomHeight" min="20" max="60" step="1" value="35" class="w-full h-1.5 bg-neutral-800 rounded-lg cursor-pointer">
+              <div class="flex justify-between items-center text-[10px] text-neutral-400 mt-1.5">
+                <span>Antal Elfa skohyllplan:</span>
+                <select id="selectShoeShelves" class="bg-neutral-900 border border-neutral-700 text-white rounded px-2 py-0.5 font-mono text-[11px]">
                   <option value="1">1 hylla</option>
                   <option value="2" selected>2 hyllor (original)</option>
                   <option value="3">3 hyllor</option>
@@ -263,34 +260,36 @@
               </div>
             </div>
 
-            <!-- 4. Resulterande Hängsektion & Skotorn -->
-            <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 flex justify-between items-center">
+            <!-- 4. Resulterande Hängsektion -->
+            <div class="bg-neutral-950 p-3 rounded-xl border border-neutral-800 flex justify-between items-center">
               <div>
-                <span class="font-semibold text-slate-200 block">Kalkylerad Hänghöjd (Jackor):</span>
-                <span class="text-[10px] text-slate-400">Total 250 - Topp - Botten</span>
+                <span class="font-medium text-neutral-300 block">Kalkylerad Hänghöjd (Jackor):</span>
+                <span class="text-[10px] text-neutral-400">Total 250 - Topp - Botten</span>
               </div>
               <div class="text-right font-mono">
+                <!-- Måttvärde med färg -->
                 <span id="valHangingHeight" class="text-base font-bold text-emerald-400">140 cm</span>
-                <span class="text-[10px] text-slate-500 block">Fri hänghöjd</span>
+                <span class="text-[10px] text-neutral-500 block">Fri hänghöjd</span>
               </div>
             </div>
 
             <!-- 5. Skotorn Fack & Djup -->
             <div class="grid grid-cols-2 gap-2">
-              <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
-                <label class="text-[11px] text-slate-400 block mb-1">Hyllor i Skotorn:</label>
-                <select id="selectTowerShelves" class="w-full bg-slate-900 border border-slate-700 text-amber-300 rounded px-2 py-1 font-mono text-xs">
+              <div class="bg-neutral-950 p-2.5 rounded-xl border border-neutral-800">
+                <label class="text-[11px] text-neutral-400 block mb-1">Hyllor i Skotorn:</label>
+                <select id="selectTowerShelves" class="w-full bg-neutral-900 border border-neutral-700 text-white rounded px-2 py-1 font-mono text-xs">
                   <option value="4">4 hyllor</option>
                   <option value="5">5 hyllor</option>
                   <option value="6" selected>6 hyllor (original)</option>
                   <option value="7">7 hyllor</option>
                 </select>
               </div>
-              <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
-                <label class="text-[11px] text-slate-400 block mb-1">Totalt Nischdjup:</label>
+              <div class="bg-neutral-950 p-2.5 rounded-xl border border-neutral-800">
+                <label class="text-[11px] text-neutral-400 block mb-1">Totalt Nischdjup:</label>
                 <div class="flex items-center gap-1">
-                  <input type="number" id="inputDepth" min="45" max="75" step="0.5" value="56.5" class="w-full bg-slate-900 border border-slate-700 text-sky-400 rounded px-2 py-1 font-mono text-xs">
-                  <span class="text-xs text-slate-500">cm</span>
+                  <!-- Måttvärde med färg -->
+                  <input type="number" id="inputDepth" min="45" max="75" step="0.5" value="56.5" class="w-full bg-neutral-900 border border-neutral-700 text-sky-400 rounded px-2 py-1 font-mono text-xs font-bold">
+                  <span class="text-xs text-neutral-400">cm</span>
                 </div>
               </div>
             </div>
@@ -298,20 +297,20 @@
           </div>
         </div>
 
-        <!-- Dynamisk Lista: ALLA SEKTIONER MED BREDD (B), HÖJD (H), DJUP (D) -->
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl flex-1 flex flex-col">
+        <!-- Sektionskort (Gråskala med färgade måttvärden) -->
+        <div class="bg-neutral-900 border border-neutral-800 rounded-2xl p-4 shadow-xl flex-1 flex flex-col">
           <div class="flex items-center justify-between mb-2">
-            <h2 class="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
-              <i class="fa-solid fa-table-cells-large text-emerald-400"></i>
+            <h2 class="text-xs font-bold uppercase tracking-wider text-neutral-300 flex items-center gap-1.5">
+              <i class="fa-solid fa-table-cells-large text-neutral-400"></i>
               Kalkylerade Mått (B × H × D)
             </h2>
-            <span class="text-[10px] font-mono text-slate-400 bg-slate-800 px-2 py-0.5 rounded border border-slate-700">
+            <span class="text-[10px] font-mono text-neutral-400 bg-neutral-800 px-2 py-0.5 rounded border border-neutral-700">
               Live beräkning
             </span>
           </div>
 
           <div id="sectionCardsContainer" class="space-y-2 text-xs overflow-y-auto max-h-[290px] pr-1">
-            <!-- Renderas dynamiskt i JavaScript med B, H, D -->
+            <!-- Renderas dynamiskt med färgade måttvärden -->
           </div>
         </div>
 
@@ -319,60 +318,60 @@
 
     </div>
 
-    <!-- 2. FLIK: 2D CAD KONSTRUKTIONSRITNING (DYNAMISK SVG) -->
+    <!-- 2. FLIK: 2D CAD KONSTRUKTIONSRITNING (Gråskala ritning med färgade måttpilar/måttvärden) -->
     <div id="view2d" class="hidden flex-col gap-6">
-      <div class="bg-slate-950 border border-slate-800 rounded-2xl p-4 sm:p-6 shadow-2xl blueprint-grid">
-        <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800 pb-3 mb-4">
+      <div class="bg-neutral-950 border border-neutral-800 rounded-2xl p-4 sm:p-6 shadow-2xl blueprint-grid">
+        <div class="flex flex-wrap items-center justify-between gap-4 border-b border-neutral-800 pb-3 mb-4">
           <div>
-            <span class="text-xs uppercase tracking-widest text-indigo-400 font-semibold">CAD Ritning & Måttkedjor</span>
-            <h2 class="text-base sm:text-lg font-bold text-white">Dynamisk Måttsatt Fasad- & Snittvy (B × H × D)</h2>
+            <span class="text-xs uppercase tracking-widest text-neutral-400 font-semibold">CAD Ritning & Måttkedjor</span>
+            <h2 class="text-base sm:text-lg font-bold text-white">Fasad- & Snittvy (Elfa Komponentsystem)</h2>
           </div>
-          <div class="text-xs font-mono text-slate-400 bg-slate-900 px-3 py-1.5 rounded-lg border border-slate-800">
-            Skala 1:20 | Uppdateras live vid sektionsändring | Direkt mot golv
+          <div class="text-xs font-mono text-neutral-400 bg-neutral-900 px-3 py-1.5 rounded-lg border border-neutral-800">
+            Skala 1:20 | Gråskala med färgade måttkedjor | Direkt mot golv
           </div>
         </div>
 
         <!-- SVG CAD RITNING -->
         <div class="w-full overflow-x-auto flex justify-center py-2">
-          <svg id="blueprintSvg" viewBox="0 0 950 1150" class="w-full max-w-[900px] bg-slate-950 border border-slate-800 rounded-xl shadow-inner font-mono text-slate-300">
+          <svg id="blueprintSvg" viewBox="0 0 950 1150" class="w-full max-w-[900px] bg-neutral-950 border border-neutral-800 rounded-xl shadow-inner font-mono text-neutral-300">
             <!-- Genereras dynamiskt via renderDynamicCadSvg() -->
           </svg>
         </div>
       </div>
     </div>
 
-    <!-- 3. FLIK: KAPLISTA & BESLAG (DYNAMISK) -->
+    <!-- 3. FLIK: ELFA KOMPONENT- & KAPLISTA -->
     <div id="viewCut" class="hidden flex-col gap-6">
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-6 shadow-xl">
-        <div class="flex flex-wrap items-center justify-between gap-4 mb-4 border-b border-slate-800 pb-3">
+      <div class="bg-neutral-900 border border-neutral-800 rounded-2xl p-4 sm:p-6 shadow-xl">
+        <div class="flex flex-wrap items-center justify-between gap-4 mb-4 border-b border-neutral-800 pb-3">
           <div>
             <h2 class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
-              <i class="fa-solid fa-scissors text-indigo-400"></i>
-              Dynamisk Kaplista / Sågspecifikation (18 mm Melamin)
+              <i class="fa-solid fa-boxes-stacked text-neutral-400"></i>
+              Elfa Modulsystem & Beståndsdelar
             </h2>
-            <p class="text-xs text-slate-400">
-              Måtten uppdateras i realtid baserat på din sektionsindelning. Inklusive skjutdörrspaket.
+            <p class="text-xs text-neutral-400">
+              Baserad på Elfas standardkomponenter, anpassade till dina exakta nischmått (135 × 250 cm).
             </p>
           </div>
-          <span class="text-xs font-mono bg-emerald-950/60 text-emerald-300 border border-emerald-800 px-3 py-1 rounded-full">
-            Platsbyggd nischkonstruktion
+          <span class="text-xs font-mono bg-neutral-800 text-neutral-300 border border-neutral-700 px-3 py-1 rounded-full">
+            Elfa Classic / Décor kompatibel
           </span>
         </div>
 
         <div class="overflow-x-auto">
           <table class="w-full text-left text-xs sm:text-sm">
-            <thead class="bg-slate-800/80 text-slate-300 font-semibold border-b border-slate-700">
+            <thead class="bg-neutral-800 text-neutral-300 font-semibold border-b border-neutral-700">
               <tr>
-                <th class="p-3">Sektion / Komponent</th>
+                <th class="p-3">Elfa Komponent / Beståndsdel</th>
                 <th class="p-3 font-mono">Bredd (B) mm</th>
                 <th class="p-3 font-mono">Höjd/Tjocklek mm</th>
                 <th class="p-3 font-mono">Djup (D) mm</th>
                 <th class="p-3">Antal</th>
-                <th class="p-3">Placering & Notering</th>
+                <th class="p-3">Elfa Art.nr & Monteringsanvisning</th>
               </tr>
             </thead>
-            <tbody id="cutListTableBody" class="divide-y divide-slate-800 font-mono text-slate-300">
-              <!-- Renderas dynamiskt i JavaScript -->
+            <tbody id="cutListTableBody" class="divide-y divide-neutral-800 font-mono text-neutral-300">
+              <!-- Renderas dynamiskt i JavaScript med färgade måttvärden -->
             </tbody>
           </table>
         </div>
@@ -381,28 +380,28 @@
 
   </main>
 
-  <!-- Sidfot -->
-  <footer class="mt-auto border-t border-slate-800 bg-slate-950/80 py-4 px-4 sm:px-6">
-    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-400">
+  <!-- Sidfot i Gråskala -->
+  <footer class="mt-auto border-t border-neutral-800 bg-neutral-950 py-4 px-4 sm:px-6">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-neutral-400">
       <div class="flex items-center gap-2">
-        <span class="w-2 h-2 rounded-full bg-indigo-500"></span>
-        <span class="text-slate-300 font-medium">Platsbyggd Garderob med Spegeldörrar & flyttbara sektioner</span>
+        <span class="w-2 h-2 rounded-full bg-neutral-600"></span>
+        <span class="text-neutral-400">Platsbyggd Garderob med Spegeldörrar & flyttbara sektioner</span>
       </div>
-      <div class="font-mono text-slate-400">
+      <div class="font-mono text-neutral-400">
         Skapad av Jonas Lund 2026
       </div>
     </div>
   </footer>
 
   <!-- Status Toast -->
-  <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 bg-slate-800 border border-slate-700 text-white text-xs px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3">
+  <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 bg-neutral-800 border border-neutral-700 text-white text-xs px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3">
     <i id="toastIcon" class="fa-solid fa-circle-check text-emerald-400 text-base"></i>
     <span id="toastMsg">Meddelande</span>
   </div>
 
   <script>
     // ==========================================
-    // 1. DATA-MODELL (DYNAMISKT TILLSTÅND)
+    // 1. DATA-MODELL (ELFA KOMPATIBEL)
     // ==========================================
     const state = {
       totalWidth: 135,       // Total nischbredd i cm
@@ -411,7 +410,7 @@
       floorWidth: 133,       // Bredd mellan golvlister i cm
       thickness: 1.8,        // Skivtjocklek i cm (18 mm)
       
-      // Justerbara sektionsparametrar
+      // Sektionsparametrar anpassade efter skiss
       mainWidth: 112,        // Huvudsektion bredd (kläddel)
       topHeight: 75,         // Toppsektion höjd (hatthyllor)
       bottomHeight: 35,      // Bottensektion höjd (skohyllor)
@@ -419,10 +418,10 @@
       numShoeShelves: 2,     // Antal skohyllplan
       numTowerShelves: 6,    // Antal hyllplan i höger skotorn
 
-      // Kalkylerade värden (uppdateras i recalculate())
+      // Beräknade värden
       towerWidth: 23,
       hangingHeight: 140,
-      innerDepth: 48,        // Total djup minus dörrspår (~8.5 cm)
+      innerDepth: 48,
       topSlotHeight: 25,
       towerSlotHeight: 23.3,
       shoeSlotHeight: 17.5
@@ -450,9 +449,9 @@
 
     function setActiveTab(activeBtn, activeView) {
       [tab3dBtn, tab2dBtn, tabCutBtn].forEach(b => {
-        b.className = "px-2.5 py-1.5 rounded-lg text-slate-400 hover:text-white transition";
+        b.className = "px-2.5 py-1.5 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-neutral-200 transition font-medium";
       });
-      activeBtn.className = "px-2.5 py-1.5 rounded-lg bg-indigo-600 text-white transition shadow";
+      activeBtn.className = "px-2.5 py-1.5 rounded-lg bg-indigo-600 text-white transition shadow font-semibold";
 
       [view3d, view2d, viewCut].forEach(v => v.classList.add('hidden'));
       activeView.classList.remove('hidden');
@@ -484,7 +483,7 @@
       }, 3000);
     }
 
-    // Reglage-element
+    // Reglage & numeriska fält
     const sliderMainWidth = document.getElementById('sliderMainWidth');
     const sliderTopHeight = document.getElementById('sliderTopHeight');
     const sliderBottomHeight = document.getElementById('sliderBottomHeight');
@@ -568,61 +567,63 @@
       showToast('Återställt till originalmått!');
     });
 
+    // Sektionskort (Gråskala med färgade måttvärden)
     function renderSectionCards() {
       const container = document.getElementById('sectionCardsContainer');
       const items = [
         {
-          name: `Hatthyllor (${state.numTopShelves} st)`,
+          name: `Elfa Hatthyllor (${state.numTopShelves} st)`,
           w: state.mainWidth,
           h: state.topSlotHeight,
           d: state.innerDepth,
-          color: 'border-indigo-500 text-indigo-400',
-          desc: `${state.numTopShelves} fack à ${state.topSlotHeight} cm höjd.`
+          valColor: 'text-indigo-400',
+          desc: `${state.numTopShelves} hyllplan à ${state.topSlotHeight} cm fackhöjd.`
         },
         {
-          name: 'Hängdel: Klädstång + Hängkrokar',
+          name: 'Hängdel: Klädstång + Kroklist',
           w: state.mainWidth,
           h: state.hangingHeight,
           d: state.innerDepth,
-          color: 'border-emerald-500 text-emerald-400',
-          desc: 'Både stång för galgar och kroklist med 6 st jackkrokar.'
+          valColor: 'text-emerald-400',
+          desc: 'Elfa kromat stålrör (galgar) & kroklist med 6 st jackkrokar.'
         },
         {
-          name: `Skotorn Höger (${state.numTowerShelves} hyllor)`,
+          name: `Elfa Skotorn Höger (${state.numTowerShelves} hyllor)`,
           w: state.towerWidth,
           h: state.hangingHeight,
           d: state.innerDepth,
-          color: 'border-amber-500 text-amber-400',
+          valColor: 'text-amber-400',
           desc: `${state.numTowerShelves + 1} fack à ~${state.towerSlotHeight} cm fackhöjd.`
         },
         {
-          name: `Skohyllor Botten (${state.numShoeShelves} st)`,
+          name: `Elfa Skohyllor Botten (${state.numShoeShelves} st)`,
           w: state.floorWidth,
           h: state.bottomHeight,
           d: state.innerDepth,
-          color: 'border-rose-500 text-rose-400',
+          valColor: 'text-rose-400',
           desc: `Totalhöjd ${state.bottomHeight} cm från golv. Fack à ~${state.shoeSlotHeight} cm.`
         }
       ];
 
       container.innerHTML = items.map(item => `
-        <div class="p-2 bg-slate-950 rounded-xl border-l-4 ${item.color.split(' ')[0]} flex justify-between items-center">
+        <div class="p-2.5 bg-neutral-950 rounded-xl border border-neutral-800 flex justify-between items-center">
           <div>
-            <span class="font-bold text-white block text-[11px]">${item.name}</span>
-            <span class="text-slate-400 text-[10px]">${item.desc}</span>
+            <span class="font-semibold text-white block text-[11px]">${item.name}</span>
+            <span class="text-neutral-400 text-[10px]">${item.desc}</span>
           </div>
           <div class="text-right font-mono">
-            <span class="${item.color.split(' ')[1]} font-bold block text-xs">
+            <!-- Endast måttvärden har färg -->
+            <span class="${item.valColor} font-bold block text-xs">
               B: ${item.w} × H: ${item.h} × D: ${item.d} cm
             </span>
-            <span class="text-[9px] text-slate-500">Bredd × Höjd × Djup</span>
+            <span class="text-[9px] text-neutral-500">Bredd × Höjd × Djup</span>
           </div>
         </div>
       `).join('');
     }
 
     // ==========================================
-    // 3. THREE.JS 3D SCEN & MODELL
+    // 3. THREE.JS 3D SCEN & MODELL (GRÅSKALA)
     // ==========================================
     let scene, camera, renderer;
     let wardrobeGroup;
@@ -658,7 +659,7 @@
     // Dörrpositioner
     let doorClosedLeftX = -0.34;
     let doorClosedRightX = 0.34;
-    let targetDoorLeftX = 0.34; // Startar öppen så inredningen syns direkt
+    let targetDoorLeftX = 0.34; // Startar öppen så Elfa-inredningen syns direkt
     let targetDoorRightX = 0.34;
 
     const container3d = document.getElementById('canvasContainer');
@@ -673,10 +674,11 @@
         c.height = cubeSize;
         const ctx = c.getContext('2d');
 
+        // Neutral gråskala miljöreflektion
         const grad = ctx.createLinearGradient(0, 0, 0, cubeSize);
-        grad.addColorStop(0, '#f8fafc');
-        grad.addColorStop(0.5, '#e2e8f0');
-        grad.addColorStop(1, '#cbd5e1');
+        grad.addColorStop(0, '#f5f5f5');
+        grad.addColorStop(0.5, '#e5e5e5');
+        grad.addColorStop(1, '#a3a3a3');
         ctx.fillStyle = grad;
         ctx.fillRect(0, 0, cubeSize, cubeSize);
 
@@ -684,8 +686,8 @@
         ctx.fillRect(20, 20, 40, 60);
         ctx.fillRect(70, 20, 40, 60);
 
-        ctx.strokeStyle = '#93c5fd';
-        ctx.lineWidth = 3;
+        ctx.strokeStyle = '#d4d4d4';
+        ctx.lineWidth = 2;
         ctx.beginPath();
         ctx.moveTo(0, 50);
         ctx.lineTo(cubeSize, 50);
@@ -699,7 +701,7 @@
       return cubeTex;
     }
 
-    function createBoxWithEdges(width, height, depth, material, edgeColor = 0x475569) {
+    function createBoxWithEdges(width, height, depth, material, edgeColor = 0x525252) {
       const group = new THREE.Group();
       const geom = new THREE.BoxGeometry(width, height, depth);
       const mesh = new THREE.Mesh(geom, material);
@@ -716,7 +718,7 @@
 
     function init3D() {
       scene = new THREE.Scene();
-      scene.background = new THREE.Color(0x060913);
+      scene.background = new THREE.Color(0x0f1115); // Neutral mörkgrå bakgrund
 
       const envMap = createReflectiveEnvironment();
       scene.environment = envMap;
@@ -742,7 +744,7 @@
       dirLight.castShadow = true;
       scene.add(dirLight);
 
-      const softFill = new THREE.DirectionalLight(0x93c5fd, 0.4);
+      const softFill = new THREE.DirectionalLight(0xffffff, 0.35);
       softFill.position.set(-3, 2, 2);
       scene.add(softFill);
 
@@ -777,9 +779,10 @@
     }
 
     function buildRoom() {
+      // Gråskala golv och vägg
       const floorMat = new THREE.MeshStandardMaterial({
-        color: 0x1e293b,
-        roughness: 0.6,
+        color: 0x262626,
+        roughness: 0.7,
         metalness: 0.1
       });
       const floor = new THREE.Mesh(new THREE.PlaneGeometry(6, 6), floorMat);
@@ -788,13 +791,14 @@
       floor.receiveShadow = true;
       scene.add(floor);
 
-      const wallMat = new THREE.MeshStandardMaterial({ color: 0x090d16, roughness: 0.95 });
+      const wallMat = new THREE.MeshStandardMaterial({ color: 0x171717, roughness: 0.95 });
       const backWall = new THREE.Mesh(new THREE.PlaneGeometry(6, 4), wallMat);
       backWall.position.set(0, 2, -0.35);
       scene.add(backWall);
     }
 
-    function createTextBadge(text, color = '#38bdf8', bg = 'rgba(15, 23, 42, 0.92)', width = 420, height = 75) {
+    // Måttbricka (Endast måttvärden har färg)
+    function createTextBadge(text, color = '#38bdf8', bg = 'rgba(23, 23, 23, 0.92)', width = 430, height = 75) {
       const canvas = document.createElement('canvas');
       canvas.width = width;
       canvas.height = height;
@@ -805,7 +809,7 @@
       ctx.roundRect(4, 4, width - 8, height - 8, 12);
       ctx.fill();
       ctx.strokeStyle = color;
-      ctx.lineWidth = 3;
+      ctx.lineWidth = 2.5;
       ctx.beginPath();
       ctx.roundRect(4, 4, width - 8, height - 8, 12);
       ctx.stroke();
@@ -849,9 +853,11 @@
       const hangH = state.hangingHeight / 100;
       const towerW = state.towerWidth / 100;
 
-      const woodMat = new THREE.MeshStandardMaterial({ color: 0xf1f5f9, roughness: 0.5, metalness: 0.05 });
-      const backMat = new THREE.MeshStandardMaterial({ color: 0x334155, roughness: 0.8 });
-      const metalMat = new THREE.MeshStandardMaterial({ color: 0xe2e8f0, roughness: 0.2, metalness: 0.9 });
+      // Material i strikt neutral gråskala
+      const woodMat = new THREE.MeshStandardMaterial({ color: 0xf5f5f5, roughness: 0.5, metalness: 0.05 });
+      const backMat = new THREE.MeshStandardMaterial({ color: 0x262626, roughness: 0.85 });
+      const steelMat = new THREE.MeshStandardMaterial({ color: 0xd4d4d4, roughness: 0.2, metalness: 0.9 });
+      const railMat = new THREE.MeshStandardMaterial({ color: 0x737373, roughness: 0.3, metalness: 0.85 });
 
       // Gavlar & topplatta
       const leftGable = createBoxWithEdges(t, H, D, woodMat);
@@ -871,30 +877,42 @@
       backBoard.position.set(0, H/2, -D/2 + 0.003);
       wardrobeGroup.add(backBoard);
 
-      // Skiljevägg
+      // Elfa Bärlist i överkant mot vägg (art 421310, 1350 mm)
+      const elfaTopRail = new THREE.Mesh(new THREE.BoxGeometry(W - 0.04, 0.045, 0.012), railMat);
+      elfaTopRail.position.set(0, H - 0.06, -D/2 + 0.012);
+      wardrobeGroup.add(elfaTopRail);
+
+      // Elfa Hängskenor (3 st, H 2300 mm)
       const divX = -W/2 + t + mainW + t/2;
       const mainCenterX = -W/2 + t + (mainW / 2);
       const towerCenterX = divX + t/2 + (towerW / 2);
 
-      const divider = createBoxWithEdges(t, hangH, inD, woodMat, selectedSectionKey === 'divider' && isEditMode ? 0x10b981 : 0x475569);
+      [-W/2 + t + 0.02, divX, W/2 - t - 0.02].forEach(hx => {
+        const hHang = new THREE.Mesh(new THREE.BoxGeometry(0.025, H - 0.2, 0.016), railMat);
+        hHang.position.set(hx, (H - 0.2) / 2 + 0.05, -D/2 + 0.015);
+        wardrobeGroup.add(hHang);
+      });
+
+      // Vertikal Skiljevägg
+      const divider = createBoxWithEdges(t, hangH, inD, woodMat, 0x525252);
       divider.position.set(divX, botH + (hangH / 2), -0.042);
       divider.userData = { section: 'divider' };
       wardrobeGroup.add(divider);
 
-      // Hatthyllor
+      // Elfa Hatthyllplan
       const topShelfSpacing = topH / state.numTopShelves;
       for (let i = 1; i <= state.numTopShelves; i++) {
         const shelfY = H - (i * topShelfSpacing);
-        const shelf = createBoxWithEdges(mainW, t, inD, woodMat, selectedSectionKey === 'top' && isEditMode ? 0x6366f1 : 0x475569);
+        const shelf = createBoxWithEdges(mainW, t, inD, woodMat, 0x525252);
         shelf.position.set(mainCenterX, shelfY, -0.042);
         shelf.userData = { section: 'top' };
         wardrobeGroup.add(shelf);
       }
 
-      // Kroklist och stång
+      // Kroklist (Elfa kroklist med 6 st krokar)
       const lowestTopY = H - topH;
       const hookBarY = lowestTopY - 0.04;
-      const hookBar = createBoxWithEdges(mainW, 0.055, 0.018, woodMat, 0x334155);
+      const hookBar = createBoxWithEdges(mainW, 0.055, 0.018, woodMat, 0x404040);
       hookBar.position.set(mainCenterX, hookBarY, -D/2 + 0.02);
       wardrobeGroup.add(hookBar);
 
@@ -903,16 +921,16 @@
         const hookGroup = new THREE.Group();
         const hookX = mainCenterX - (mainW/2) + (mainW * 0.1) + (k * ((mainW * 0.8) / (numHooks - 1)));
         
-        const base = new THREE.Mesh(new THREE.CylinderGeometry(0.009, 0.009, 0.006, 12), metalMat);
+        const base = new THREE.Mesh(new THREE.CylinderGeometry(0.009, 0.009, 0.006, 12), steelMat);
         base.rotation.x = Math.PI / 2;
         hookGroup.add(base);
 
-        const peg = new THREE.Mesh(new THREE.CylinderGeometry(0.005, 0.005, 0.045, 12), metalMat);
+        const peg = new THREE.Mesh(new THREE.CylinderGeometry(0.005, 0.005, 0.045, 12), steelMat);
         peg.rotation.x = Math.PI / 2;
         peg.position.z = 0.022;
         hookGroup.add(peg);
 
-        const tip = new THREE.Mesh(new THREE.SphereGeometry(0.008, 12, 12), metalMat);
+        const tip = new THREE.Mesh(new THREE.SphereGeometry(0.008, 12, 12), steelMat);
         tip.position.set(0, 0.015, 0.04);
         hookGroup.add(tip);
 
@@ -920,38 +938,38 @@
         wardrobeGroup.add(hookGroup);
       }
 
-      // Klädstång
+      // Elfa Klädstång (kromat stålrör Ø25 mm)
       const rodY = lowestTopY - 0.15;
-      const rodGeom = new THREE.CylinderGeometry(0.013, 0.013, mainW - 0.02, 24);
-      const rodMat = new THREE.MeshStandardMaterial({ color: 0xf8fafc, metalness: 0.95, roughness: 0.12 });
+      const rodGeom = new THREE.CylinderGeometry(0.0125, 0.0125, mainW - 0.02, 24);
+      const rodMat = new THREE.MeshStandardMaterial({ color: 0xf5f5f5, metalness: 0.95, roughness: 0.12 });
       const rod = new THREE.Mesh(rodGeom, rodMat);
       rod.rotation.z = Math.PI / 2;
       rod.position.set(mainCenterX, rodY, -0.02);
       wardrobeGroup.add(rod);
 
-      const fL = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 0.012, 16), metalMat);
+      const fL = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 0.012, 16), steelMat);
       fL.rotation.z = Math.PI / 2;
       fL.position.set(mainCenterX - (mainW/2) + 0.008, rodY, -0.02);
       wardrobeGroup.add(fL);
 
-      const fR = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 0.012, 16), metalMat);
+      const fR = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 0.012, 16), steelMat);
       fR.rotation.z = Math.PI / 2;
       fR.position.set(mainCenterX + (mainW/2) - 0.008, rodY, -0.02);
       wardrobeGroup.add(fR);
 
-      // Galgar
+      // Galgar i neutral gråskala
       for (let g = 0; g < 5; g++) {
         const hangerGroup = new THREE.Group();
         const hgX = mainCenterX - (mainW * 0.32) + (g * (mainW * 0.16));
         
-        const hHook = new THREE.Mesh(new THREE.TorusGeometry(0.016, 0.003, 8, 16, Math.PI * 1.3), metalMat);
+        const hHook = new THREE.Mesh(new THREE.TorusGeometry(0.016, 0.003, 8, 16, Math.PI * 1.3), steelMat);
         hHook.position.set(0, 0.018, 0);
         hHook.rotation.y = Math.PI / 2;
         hangerGroup.add(hHook);
 
         const hangerWood = new THREE.Mesh(
           new THREE.BoxGeometry(0.014, 0.016, 0.38),
-          new THREE.MeshStandardMaterial({ color: 0xd97706, roughness: 0.4 })
+          new THREE.MeshStandardMaterial({ color: 0x404040, roughness: 0.4 })
         );
         hangerWood.position.set(0, -0.01, 0);
         hangerGroup.add(hangerWood);
@@ -960,11 +978,11 @@
         wardrobeGroup.add(hangerGroup);
       }
 
-      // Skotorn
+      // Elfa Skotorn (Höger nisch 23 cm)
       const towerStep = hangH / (state.numTowerShelves + 1);
       for (let s = 1; s <= state.numTowerShelves; s++) {
         const shelfY = botH + (s * towerStep);
-        const tShelf = createBoxWithEdges(towerW, t, inD, woodMat, selectedSectionKey === 'tower' && isEditMode ? 0xf59e0b : 0x475569);
+        const tShelf = createBoxWithEdges(towerW, t, inD, woodMat, 0x525252);
         tShelf.position.set(towerCenterX, shelfY, -0.042);
         tShelf.userData = { section: 'tower' };
         wardrobeGroup.add(tShelf);
@@ -977,17 +995,16 @@
         wardrobeGroup.add(tTopShelf);
       }
 
-      // Skohyllor botten
+      // Elfa Skohyllplan (Botten)
       const shoeStep = botH / state.numShoeShelves;
       for (let sh = 1; sh <= state.numShoeShelves; sh++) {
         const shelfY = sh * shoeStep;
-        const sShelf = createBoxWithEdges(W - 2*t, t, inD, woodMat, selectedSectionKey === 'bottom' && isEditMode ? 0xf43f5e : 0x475569);
+        const sShelf = createBoxWithEdges(W - 2*t, t, inD, woodMat, 0x525252);
         sShelf.position.set(0, shelfY, -0.042);
         sShelf.userData = { section: 'bottom' };
         wardrobeGroup.add(sShelf);
       }
 
-      // 3D-handtag om redigeringsläge är aktivt
       if (isEditMode) {
         build3DEditHandles(divX, mainCenterX, lowestTopY, botH, H, inD);
       }
@@ -995,23 +1012,23 @@
       // Spegeldörrar
       createBrightSlidingDoors(W, H, D);
 
-      // Takbelysning
+      // Takbelysning (Gråskala profil med neutral belysning)
       const ledBar = new THREE.BoxGeometry(W - 0.1, 0.015, 0.02);
       const ledMat = new THREE.MeshStandardMaterial({
-        color: 0xfffbeb,
-        emissive: 0xfef08a,
-        emissiveIntensity: isLightOn ? 1.5 : 0.0,
+        color: 0xffffff,
+        emissive: 0xffffff,
+        emissiveIntensity: isLightOn ? 1.2 : 0.0,
         roughness: 0.2
       });
       ledMesh = new THREE.Mesh(ledBar, ledMat);
       ledMesh.position.set(0, H - 0.02, 0.12);
       wardrobeGroup.add(ledMesh);
 
-      ledLight = new THREE.PointLight(0xfff7ed, isLightOn ? 1.2 : 0.0, 3.5);
+      ledLight = new THREE.PointLight(0xffffff, isLightOn ? 1.0 : 0.0, 3.5);
       ledLight.position.set(0, H - 0.05, 0.1);
       wardrobeGroup.add(ledLight);
 
-      // Måttbrickor
+      // Måttbrickor (Endast måttvärden har färg)
       build3DDimensionBadges(mainCenterX, towerCenterX, lowestTopY, botH, H, W, D);
     }
 
@@ -1024,13 +1041,13 @@
       doorClosedRightX = W / 4;
 
       const mirrorMat = new THREE.MeshStandardMaterial({
-        color: 0xf8fafc,
+        color: 0xf5f5f5,
         metalness: 0.98,
         roughness: 0.04,
         envMapIntensity: 1.8
       });
       const frameMat = new THREE.MeshStandardMaterial({
-        color: 0x94a3b8,
+        color: 0xa3a3a3,
         metalness: 0.85,
         roughness: 0.25
       });
@@ -1063,7 +1080,7 @@
         return grp;
       }
 
-      // Topphängd skena
+      // Toppskena (Elfa skjutdörrsskena)
       const topRail = new THREE.Mesh(new THREE.BoxGeometry(W, 0.025, 0.075), frameMat);
       topRail.position.set(0, H - 0.012, D / 2 - 0.03);
       wardrobeGroup.add(topRail);
@@ -1081,8 +1098,9 @@
       wardrobeGroup.add(doorRightGroup);
     }
 
+    // Måttbrickor i 3D: Endast måttvärden har färg
     function build3DDimensionBadges(mainCenterX, towerCenterX, lowestTopY, botH, H, W, D) {
-      // 1. Sektionsmått (B × H × D)
+      // 1. Sektionsmått (Färgat måttvärde)
       const topBadge = createTextBadge(`Hatthyllor: B: ${state.mainWidth} × H: ${state.topSlotHeight} × D: ${state.innerDepth} cm`, "#818cf8");
       topBadge.position.set(mainCenterX, lowestTopY + (state.topHeight / 200), 0.05);
       sectionDimensionGroup.add(topBadge);
@@ -1101,18 +1119,18 @@
 
       sectionDimensionGroup.visible = isSectionDimsVisible;
 
-      // 2. Yttermått
-      const totalHBadge = createTextBadge(`Höjd: ${state.totalHeight} cm`, "#38bdf8", "rgba(15,23,42,0.95)", 280, 65);
+      // 2. Yttermått (Färgat måttvärde)
+      const totalHBadge = createTextBadge(`Höjd: ${state.totalHeight} cm`, "#38bdf8", "rgba(23,23,23,0.95)", 280, 65);
       totalHBadge.position.set(-W/2 - 0.22, H/2, 0);
       totalHBadge.scale.set(0.40, 0.09, 1);
       outerDimensionGroup.add(totalHBadge);
 
-      const topWBadge = createTextBadge(`Bredd Tak: ${state.totalWidth} cm`, "#38bdf8", "rgba(15,23,42,0.95)", 320, 65);
+      const topWBadge = createTextBadge(`Bredd Tak: ${state.totalWidth} cm`, "#38bdf8", "rgba(23,23,23,0.95)", 320, 65);
       topWBadge.position.set(0, H + 0.12, 0);
       topWBadge.scale.set(0.44, 0.09, 1);
       outerDimensionGroup.add(topWBadge);
 
-      const floorWBadge = createTextBadge(`Bredd Golv: ${state.floorWidth} cm`, "#f59e0b", "rgba(15,23,42,0.95)", 340, 65);
+      const floorWBadge = createTextBadge(`Bredd Golv: ${state.floorWidth} cm`, "#f59e0b", "rgba(23,23,23,0.95)", 340, 65);
       floorWBadge.position.set(0, -0.10, 0);
       floorWBadge.scale.set(0.46, 0.09, 1);
       outerDimensionGroup.add(floorWBadge);
@@ -1132,7 +1150,7 @@
       divHandleMesh.rotation.z = Math.PI / 2;
       dividerHandle.add(divHandleMesh);
 
-      const divLabel = createTextBadge("↔ DRA SKILJEVÄGG", "#10b981", "rgba(6,78,59,0.95)", 300, 60);
+      const divLabel = createTextBadge("↔ DRA SKILJEVÄGG", "#10b981", "rgba(23,23,23,0.95)", 300, 60);
       divLabel.position.set(0, 0.12, 0);
       divLabel.scale.set(0.35, 0.07, 1);
       dividerHandle.add(divLabel);
@@ -1151,7 +1169,7 @@
       );
       topHandle.add(topHandleMesh);
 
-      const topLabel = createTextBadge("↕ DRA TOPPHÖJD", "#818cf8", "rgba(30,27,75,0.95)", 300, 60);
+      const topLabel = createTextBadge("↕ DRA TOPPHÖJD", "#818cf8", "rgba(23,23,23,0.95)", 300, 60);
       topLabel.position.set(0, -0.09, 0);
       topLabel.scale.set(0.35, 0.07, 1);
       topHandle.add(topLabel);
@@ -1170,7 +1188,7 @@
       );
       bottomHandle.add(botHandleMesh);
 
-      const botLabel = createTextBadge("↕ DRA SKOHÖJD", "#fb7185", "rgba(76,5,25,0.95)", 300, 60);
+      const botLabel = createTextBadge("↕ DRA SKOHÖJD", "#fb7185", "rgba(23,23,23,0.95)", 300, 60);
       botLabel.position.set(0, 0.09, 0);
       botLabel.scale.set(0.35, 0.07, 1);
       bottomHandle.add(botLabel);
@@ -1200,7 +1218,6 @@
         cameraTheta -= deltaX * 0.008;
         cameraPhi -= deltaY * 0.008;
 
-        // Spärra kameran så den aldrig dyker under golvet (Y=0)
         cameraPhi = Math.max(0.15, Math.min(Math.PI / 2.05, cameraPhi));
         updateCameraPosition();
       });
@@ -1362,60 +1379,60 @@
       if (!title || !body) return;
 
       if (selectedSectionKey === 'divider') {
-        title.textContent = "Skiljevägg / Bredd Hängdel";
+        title.textContent = "Skiljevägg / Hängdel";
         body.innerHTML = `
           <div class="flex items-center justify-between">
-            <span class="text-slate-300">Bredd Hängdel:</span>
+            <span class="text-neutral-400">Bredd Hängdel:</span>
             <div class="flex items-center gap-1">
-              <button onclick="adjustParam('mainWidth', -1)" class="w-6 h-6 bg-slate-800 hover:bg-slate-700 text-white rounded font-mono">-</button>
+              <button onclick="adjustParam('mainWidth', -1)" class="w-6 h-6 bg-indigo-600 hover:bg-indigo-500 text-white rounded font-mono font-bold">-</button>
               <span class="font-mono font-bold text-emerald-400 px-1">${state.mainWidth} cm</span>
-              <button onclick="adjustParam('mainWidth', 1)" class="w-6 h-6 bg-slate-800 hover:bg-slate-700 text-white rounded font-mono">+</button>
+              <button onclick="adjustParam('mainWidth', 1)" class="w-6 h-6 bg-indigo-600 hover:bg-indigo-500 text-white rounded font-mono font-bold">+</button>
             </div>
           </div>
-          <div class="flex justify-between text-[11px] text-slate-400 font-mono">
-            <span>Skotorn (höger): <strong class="text-amber-400">${state.towerWidth} cm</strong></span>
-            <span>Hänghöjd: <strong class="text-emerald-400">${state.hangingHeight} cm</strong></span>
+          <div class="flex justify-between text-[11px] text-neutral-400 font-mono">
+            <span>Skotorn: <strong class="text-amber-400 font-bold">${state.towerWidth} cm</strong></span>
+            <span>Hänghöjd: <strong class="text-emerald-400 font-bold">${state.hangingHeight} cm</strong></span>
           </div>
         `;
       } else if (selectedSectionKey === 'top') {
         title.textContent = "Toppsektion (Hatthyllor)";
         body.innerHTML = `
           <div class="flex items-center justify-between">
-            <span class="text-slate-300">Total Topphöjd:</span>
+            <span class="text-neutral-400">Total Topphöjd:</span>
             <div class="flex items-center gap-1">
-              <button onclick="adjustParam('topHeight', -1)" class="w-6 h-6 bg-slate-800 hover:bg-slate-700 text-white rounded font-mono">-</button>
+              <button onclick="adjustParam('topHeight', -1)" class="w-6 h-6 bg-indigo-600 hover:bg-indigo-500 text-white rounded font-mono font-bold">-</button>
               <span class="font-mono font-bold text-indigo-400 px-1">${state.topHeight} cm</span>
-              <button onclick="adjustParam('topHeight', 1)" class="w-6 h-6 bg-slate-800 hover:bg-slate-700 text-white rounded font-mono">+</button>
+              <button onclick="adjustParam('topHeight', 1)" class="w-6 h-6 bg-indigo-600 hover:bg-indigo-500 text-white rounded font-mono font-bold">+</button>
             </div>
           </div>
-          <div class="text-[11px] text-slate-400 font-mono">
-            ${state.numTopShelves} hyllplan à <strong class="text-indigo-300">${state.topSlotHeight} cm</strong> fackhöjd.
+          <div class="text-[11px] text-neutral-400 font-mono">
+            ${state.numTopShelves} hyllplan à <strong class="text-indigo-400 font-bold">${state.topSlotHeight} cm</strong> fackhöjd.
           </div>
         `;
       } else if (selectedSectionKey === 'bottom') {
         title.textContent = "Bottensektion (Skoförvaring)";
         body.innerHTML = `
           <div class="flex items-center justify-between">
-            <span class="text-slate-300">Total Skohöjd:</span>
+            <span class="text-neutral-400">Total Skohöjd:</span>
             <div class="flex items-center gap-1">
-              <button onclick="adjustParam('bottomHeight', -1)" class="w-6 h-6 bg-slate-800 hover:bg-slate-700 text-white rounded font-mono">-</button>
+              <button onclick="adjustParam('bottomHeight', -1)" class="w-6 h-6 bg-indigo-600 hover:bg-indigo-500 text-white rounded font-mono font-bold">-</button>
               <span class="font-mono font-bold text-rose-400 px-1">${state.bottomHeight} cm</span>
-              <button onclick="adjustParam('bottomHeight', 1)" class="w-6 h-6 bg-slate-800 hover:bg-slate-700 text-white rounded font-mono">+</button>
+              <button onclick="adjustParam('bottomHeight', 1)" class="w-6 h-6 bg-indigo-600 hover:bg-indigo-500 text-white rounded font-mono font-bold">+</button>
             </div>
           </div>
-          <div class="text-[11px] text-slate-400 font-mono">
-            ${state.numShoeShelves} hyllplan à <strong class="text-rose-300">${state.shoeSlotHeight} cm</strong> fackhöjd.
+          <div class="text-[11px] text-neutral-400 font-mono">
+            ${state.numShoeShelves} hyllplan à <strong class="text-rose-400 font-bold">${state.shoeSlotHeight} cm</strong> fackhöjd.
           </div>
         `;
       } else {
-        title.textContent = "Skotorn Höger";
+        title.textContent = "Elfa Skotorn Höger";
         body.innerHTML = `
           <div class="flex items-center justify-between">
-            <span class="text-slate-300">Bredd Skotorn:</span>
+            <span class="text-neutral-400">Bredd Skotorn:</span>
             <span class="font-mono font-bold text-amber-400">${state.towerWidth} cm</span>
           </div>
-          <div class="text-[11px] text-slate-400 font-mono">
-            Höjd: <strong>${state.hangingHeight} cm</strong> (${state.numTowerShelves} hyllplan).
+          <div class="text-[11px] text-neutral-400 font-mono">
+            Höjd: <strong class="text-white font-bold">${state.hangingHeight} cm</strong> (${state.numTowerShelves} hyllor).
           </div>
         `;
       }
@@ -1483,8 +1500,8 @@
 
       document.getElementById('btnToggleLight').addEventListener('click', () => {
         isLightOn = !isLightOn;
-        if (ledLight) ledLight.intensity = isLightOn ? 1.2 : 0.0;
-        if (ledMesh) ledMesh.material.emissiveIntensity = isLightOn ? 1.5 : 0.0;
+        if (ledLight) ledLight.intensity = isLightOn ? 1.0 : 0.0;
+        if (ledMesh) ledMesh.material.emissiveIntensity = isLightOn ? 1.2 : 0.0;
         showToast(isLightOn ? 'LED-belysning tänd' : 'LED-belysning släckt');
       });
 
@@ -1528,7 +1545,7 @@
     document.getElementById('btnSaveJson').addEventListener('click', () => {
       const exportData = {
         version: "1.0",
-        appName: "Platsbyggd Nischgarderob 3D",
+        appName: "Platsbyggd Nischgarderob 3D - Elfa Kompatibel",
         createdBy: "Jonas Lund 2026",
         exportDate: new Date().toISOString(),
         state: { ...state }
@@ -1579,7 +1596,7 @@
     });
 
     // ==========================================
-    // 5. DYNAMISK 2D CAD RITNING (SVG)
+    // 5. DYNAMISK 2D CAD RITNING (GRÅSKALA MED FÄRGADE MÅTTVÄRDEN)
     // ==========================================
     function renderDynamicCadSvg() {
       const svg = document.getElementById('blueprintSvg');
@@ -1603,37 +1620,39 @@
       const topBottomY = originY + topH_px;
       const botTopY = floorY - botH_px;
 
+      // Elfa hyllor (Gråskala stomme)
       let topShelvesSvg = '';
       const topSpacing_px = topH_px / state.numTopShelves;
       for (let i = 1; i <= state.numTopShelves; i++) {
         const sy = originY + (i * topSpacing_px);
-        topShelvesSvg += `<rect x="${originX}" y="${sy - 4}" width="${mainW_px}" height="8" fill="#334155" stroke="#94a3b8" stroke-width="1" />`;
+        topShelvesSvg += `<rect x="${originX}" y="${sy - 4}" width="${mainW_px}" height="8" fill="#262626" stroke="#737373" stroke-width="1" />`;
       }
 
       let towerShelvesSvg = '';
       const towerStep_px = hangH_px / (state.numTowerShelves + 1);
       for (let s = 1; s <= state.numTowerShelves; s++) {
         const sy = botTopY - (s * towerStep_px);
-        towerShelvesSvg += `<rect x="${divX}" y="${sy - 3}" width="${towerW_px}" height="6" fill="#334155" stroke="#94a3b8" stroke-width="0.8" />`;
+        towerShelvesSvg += `<rect x="${divX}" y="${sy - 3}" width="${towerW_px}" height="6" fill="#262626" stroke="#737373" stroke-width="0.8" />`;
       }
       for (let ts = 1; ts <= state.numTopShelves; ts++) {
         const sy = originY + (ts * topSpacing_px);
-        towerShelvesSvg += `<rect x="${divX}" y="${sy - 4}" width="${towerW_px}" height="6" fill="#334155" stroke="#94a3b8" stroke-width="0.8" />`;
+        towerShelvesSvg += `<rect x="${divX}" y="${sy - 4}" width="${towerW_px}" height="6" fill="#262626" stroke="#737373" stroke-width="0.8" />`;
       }
 
       let shoeShelvesSvg = '';
       const shoeStep_px = botH_px / state.numShoeShelves;
       for (let sh = 1; sh <= state.numShoeShelves; sh++) {
         const sy = floorY - (sh * shoeStep_px);
-        shoeShelvesSvg += `<rect x="${originX}" y="${sy - 4}" width="${W_px}" height="8" fill="#334155" stroke="#fb7185" stroke-width="1.2" />`;
+        shoeShelvesSvg += `<rect x="${originX}" y="${sy - 4}" width="${W_px}" height="8" fill="#262626" stroke="#737373" stroke-width="1.2" />`;
       }
 
       svg.innerHTML = `
         <defs>
           <pattern id="cadGrid" width="25" height="25" patternUnits="userSpaceOnUse">
-            <path d="M 25 0 L 0 0 0 25" fill="none" stroke="#1e293b" stroke-width="0.8" />
+            <path d="M 25 0 L 0 0 0 25" fill="none" stroke="#262626" stroke-width="0.8" />
           </pattern>
-          <marker id="mArrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <!-- Färgade måttpilar -->
+          <marker id="mArrowSky" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
             <path d="M 0 1.5 L 10 5 L 0 8.5 z" fill="#38bdf8" />
           </marker>
           <marker id="mArrowEmerald" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
@@ -1645,46 +1664,53 @@
           <marker id="mArrowRose" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
             <path d="M 0 1.5 L 10 5 L 0 8.5 z" fill="#fb7185" />
           </marker>
+          <marker id="mArrowIndigo" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 1.5 L 10 5 L 0 8.5 z" fill="#818cf8" />
+          </marker>
         </defs>
 
         <rect width="950" height="1150" fill="url(#cadGrid)" />
-        <rect x="25" y="25" width="900" height="1100" fill="none" stroke="#475569" stroke-width="1.5" />
-        <rect x="30" y="30" width="890" height="1090" fill="none" stroke="#334155" stroke-width="0.8" />
+        <rect x="25" y="25" width="900" height="1100" fill="none" stroke="#404040" stroke-width="1.5" />
+        <rect x="30" y="30" width="890" height="1090" fill="none" stroke="#262626" stroke-width="0.8" />
 
-        <!-- Titelblock -->
+        <!-- Titelblock i Gråskala -->
         <g transform="translate(560, 1020)">
-          <rect width="350" height="90" fill="#090d16" stroke="#475569" stroke-width="1" />
-          <line x1="0" y1="30" x2="350" y2="30" stroke="#334155" stroke-width="1" />
-          <line x1="0" y1="60" x2="350" y2="60" stroke="#334155" stroke-width="1" />
-          <line x1="175" y1="30" x2="175" y2="90" stroke="#334155" stroke-width="1" />
-          <text x="15" y="20" fill="#f8fafc" font-size="11" font-weight="bold">PLATSB الأهGGAD NISCHGARDEROB</text>
-          <text x="15" y="48" fill="#94a3b8" font-size="9.5">NISCH: ${state.totalWidth * 10} × ${state.totalHeight * 10} × ${state.totalDepth * 10} mm</text>
-          <text x="190" y="48" fill="#94a3b8" font-size="9.5">MONTAGE: DIREKT MOT GOLV</text>
-          <text x="15" y="78" fill="#34d399" font-size="9.5">INGEN TRÄSOCKEL / FOT</text>
-          <text x="190" y="78" fill="#38bdf8" font-size="9.5">SPEGELSKJUTDÖRRAR</text>
+          <rect width="350" height="90" fill="#171717" stroke="#404040" stroke-width="1" />
+          <line x1="0" y1="30" x2="350" y2="30" stroke="#262626" stroke-width="1" />
+          <line x1="0" y1="60" x2="350" y2="60" stroke="#262626" stroke-width="1" />
+          <line x1="175" y1="30" x2="175" y2="90" stroke="#262626" stroke-width="1" />
+          <text x="15" y="20" fill="#f5f5f5" font-size="11" font-weight="bold">ELFA MODULGARDEROB</text>
+          <text x="15" y="48" fill="#a3a3a3" font-size="9.5">NISCH: <tspan fill="#38bdf8">${state.totalWidth * 10} × ${state.totalHeight * 10} × ${state.totalDepth * 10} mm</tspan></text>
+          <text x="190" y="48" fill="#a3a3a3" font-size="9.5">MONTAGE: DIREKT MOT GOLV</text>
+          <text x="15" y="78" fill="#a3a3a3" font-size="9.5">INGEN TRÄSOCKEL / FOT</text>
+          <text x="190" y="78" fill="#a3a3a3" font-size="9.5">ELFA SPEGELSKJUTDÖRRAR</text>
         </g>
 
         <!-- Tak & Golv referens -->
-        <line x1="160" y1="${originY}" x2="760" y2="${originY}" stroke="#64748b" stroke-dasharray="6,4" stroke-width="1.5" />
-        <text x="160" y="${originY - 8}" fill="#94a3b8" font-size="11">TAK: ${state.totalWidth} cm</text>
+        <line x1="160" y1="${originY}" x2="760" y2="${originY}" stroke="#525252" stroke-dasharray="6,4" stroke-width="1.5" />
+        <text x="160" y="${originY - 8}" fill="#a3a3a3" font-size="11">TAK: <tspan fill="#38bdf8" font-weight="bold">${state.totalWidth} cm</tspan></text>
 
-        <line x1="160" y1="${floorY}" x2="760" y2="${floorY}" stroke="#64748b" stroke-dasharray="6,4" stroke-width="1.5" />
-        <text x="160" y="${floorY + 18}" fill="#94a3b8" font-size="11">GOLV: Befintligt rumsunderlag (${state.floorWidth} cm mellan lister)</text>
+        <line x1="160" y1="${floorY}" x2="760" y2="${floorY}" stroke="#525252" stroke-dasharray="6,4" stroke-width="1.5" />
+        <text x="160" y="${floorY + 18}" fill="#a3a3a3" font-size="11">GOLV: Befintligt rumsunderlag (<tspan fill="#fbbf24" font-weight="bold">${state.floorWidth} cm</tspan> mellan lister)</text>
 
-        <!-- Garderobsram -->
-        <rect x="${originX}" y="${originY}" width="${W_px}" height="${H_px}" fill="#0f172a" fill-opacity="0.4" stroke="#94a3b8" stroke-width="2" />
+        <!-- Garderobsram i Gråskala -->
+        <rect x="${originX}" y="${originY}" width="${W_px}" height="${H_px}" fill="#171717" fill-opacity="0.6" stroke="#737373" stroke-width="2" />
+
+        <!-- Elfa Bärlist 1350 mm i CAD -->
+        <rect x="${originX + 8}" y="${originY + 4}" width="${W_px - 16}" height="8" fill="#404040" stroke="#737373" stroke-width="1" />
+        <text x="${originX + W_px/2}" y="${originY + 22}" fill="#a3a3a3" font-size="9" text-anchor="middle">Elfa Bärlist 1350 mm (art.nr 421310)</text>
 
         <!-- Skiljevägg -->
-        <rect x="${divX}" y="${topBottomY}" width="8" height="${hangH_px}" fill="#475569" stroke="#64748b" stroke-width="1" />
+        <rect x="${divX}" y="${topBottomY}" width="8" height="${hangH_px}" fill="#262626" stroke="#525252" stroke-width="1" />
 
         <!-- Hyllplan -->
         ${topShelvesSvg}
         ${towerShelvesSvg}
         ${shoeShelvesSvg}
 
-        <!-- Kroklist (6 st hängkrokar) -->
-        <line x1="${originX + 15}" y1="${topBottomY + 16}" x2="${divX - 15}" y2="${topBottomY + 16}" stroke="#94a3b8" stroke-width="3" />
-        <g stroke="#38bdf8" stroke-width="2" fill="none">
+        <!-- Kroklist med 6 st jackkrokar -->
+        <line x1="${originX + 15}" y1="${topBottomY + 16}" x2="${divX - 15}" y2="${topBottomY + 16}" stroke="#737373" stroke-width="3" />
+        <g stroke="#a3a3a3" stroke-width="2" fill="none">
           <path d="M ${originX + 30} ${topBottomY + 16} l 0 10 a 4 4 0 0 0 6 0" />
           <path d="M ${originX + mainW_px*0.25} ${topBottomY + 16} l 0 10 a 4 4 0 0 0 6 0" />
           <path d="M ${originX + mainW_px*0.45} ${topBottomY + 16} l 0 10 a 4 4 0 0 0 6 0" />
@@ -1692,54 +1718,50 @@
           <path d="M ${originX + mainW_px*0.82} ${topBottomY + 16} l 0 10 a 4 4 0 0 0 6 0" />
         </g>
 
-        <!-- Klädstång för galgar (Ø25 mm) & galgar -->
-        <line x1="${originX + 15}" y1="${topBottomY + 55}" x2="${divX - 15}" y2="${topBottomY + 55}" stroke="#f1f5f9" stroke-width="5" stroke-linecap="round" />
-        <g stroke="#f59e0b" stroke-width="1.5" fill="none">
+        <!-- Elfa Klädstång för galgar (Ø25 mm) -->
+        <line x1="${originX + 15}" y1="${topBottomY + 55}" x2="${divX - 15}" y2="${topBottomY + 55}" stroke="#e5e5e5" stroke-width="5" stroke-linecap="round" />
+        <g stroke="#737373" stroke-width="1.5" fill="none">
           <path d="M ${originX + 70} ${topBottomY + 55} l -25 35 l 50 0 z" />
           <path d="M ${originX + mainW_px*0.45} ${topBottomY + 55} l -25 35 l 50 0 z" />
           <path d="M ${originX + mainW_px*0.75} ${topBottomY + 55} l -25 35 l 50 0 z" />
         </g>
 
-        <!-- Sektionsmärken -->
-        <rect x="${originX + 15}" y="${originY + 20}" width="280" height="34" rx="6" fill="#1e293b" stroke="#818cf8" stroke-width="1" />
-        <text x="${originX + 25}" y="${originY + 42}" fill="#c7d2fe" font-size="11" font-weight="bold">
-          Hatthyllor: B: ${state.mainWidth} × H: ${state.topSlotHeight} × D: ${state.innerDepth} cm
+        <!-- Sektionsetiketter (Gråskala med färgade måttvärden) -->
+        <rect x="${originX + 15}" y="${originY + 28}" width="290" height="30" rx="6" fill="#171717" stroke="#404040" stroke-width="1" />
+        <text x="${originX + 25}" y="${originY + 48}" fill="#a3a3a3" font-size="10.5">
+          Hatthyllor: <tspan fill="#818cf8" font-weight="bold">B: ${state.mainWidth} × H: ${state.topSlotHeight} × D: ${state.innerDepth} cm</tspan>
         </text>
 
-        <rect x="${originX + 20}" y="${topBottomY + 105}" width="320" height="52" rx="8" fill="#0f172a" stroke="#34d399" stroke-width="1.5" />
-        <text x="${originX + 35}" y="${topBottomY + 126}" fill="#34d399" font-size="11.5" font-weight="bold">
-          HÄNGDEL: B: ${state.mainWidth} × H: ${state.hangingHeight} × D: ${state.innerDepth} cm
+        <rect x="${originX + 20}" y="${topBottomY + 105}" width="320" height="48" rx="8" fill="#171717" stroke="#404040" stroke-width="1.5" />
+        <text x="${originX + 35}" y="${topBottomY + 125}" fill="#a3a3a3" font-size="11">
+          HÄNGDEL: <tspan fill="#34d399" font-weight="bold">B: ${state.mainWidth} × H: ${state.hangingHeight} × D: ${state.innerDepth} cm</tspan>
         </text>
-        <text x="${originX + 35}" y="${topBottomY + 143}" fill="#94a3b8" font-size="9.5">
-          Både hängkrokar (6 st) och klädstång för galgar
-        </text>
-
-        <rect x="${divX + 6}" y="${topBottomY + 50}" width="${Math.max(65, towerW_px - 12)}" height="60" rx="4" fill="#1e293b" stroke="#fbbf24" stroke-width="1" />
-        <text x="${divX + towerW_px/2}" y="${topBottomY + 72}" fill="#fbbf24" font-size="10" font-weight="bold" text-anchor="middle">SKOTORN</text>
-        <text x="${divX + towerW_px/2}" y="${topBottomY + 88}" fill="#fde68a" font-size="9" text-anchor="middle">B: ${state.towerWidth} cm</text>
-        <text x="${divX + towerW_px/2}" y="${topBottomY + 101}" fill="#94a3b8" font-size="8" text-anchor="middle">H: ${state.hangingHeight} cm</text>
-
-        <rect x="${originX + 15}" y="${botTopY + 10}" width="320" height="34" rx="4" fill="#1e293b" stroke="#fb7185" stroke-width="1" />
-        <text x="${originX + 25}" y="${botTopY + 31}" fill="#fda4af" font-size="11" font-weight="bold">
-          Skohyllor: B: ${state.floorWidth} × H: ${state.bottomHeight} × D: ${state.innerDepth} cm
+        <text x="${originX + 35}" y="${topBottomY + 141}" fill="#737373" font-size="9">
+          Elfa Klädstång Ø25mm + Kroklist (6 st metallkrokar)
         </text>
 
-        <!-- Tak LED -->
-        <rect x="${originX + 10}" y="${originY + 6}" width="${W_px - 20}" height="8" rx="3" fill="#fef08a" opacity="0.9" />
-        <text x="${originX + W_px/2}" y="${originY + 22}" fill="#fef08a" font-size="10" text-anchor="middle" font-weight="bold">✦ Lysen - rörelsesensor (LED takprofil)</text>
+        <rect x="${divX + 6}" y="${topBottomY + 50}" width="${Math.max(65, towerW_px - 12)}" height="60" rx="4" fill="#171717" stroke="#404040" stroke-width="1" />
+        <text x="${divX + towerW_px/2}" y="${topBottomY + 70}" fill="#a3a3a3" font-size="10" font-weight="bold" text-anchor="middle">SKOTORN</text>
+        <text x="${divX + towerW_px/2}" y="${topBottomY + 86}" fill="#fbbf24" font-size="9" font-weight="bold" text-anchor="middle">B: ${state.towerWidth} cm</text>
+        <text x="${divX + towerW_px/2}" y="${topBottomY + 99}" fill="#a3a3a3" font-size="8" text-anchor="middle">H: ${state.hangingHeight} cm</text>
 
-        <!-- Måttkedjor -->
+        <rect x="${originX + 15}" y="${botTopY + 10}" width="320" height="30" rx="4" fill="#171717" stroke="#404040" stroke-width="1" />
+        <text x="${originX + 25}" y="${botTopY + 30}" fill="#a3a3a3" font-size="10.5">
+          Skohyllor: <tspan fill="#fb7185" font-weight="bold">B: ${state.floorWidth} × H: ${state.bottomHeight} × D: ${state.innerDepth} cm</tspan>
+        </text>
+
+        <!-- FÄRGADE MÅTTKEDJOR & MÅTTVÄRDEN -->
         <g transform="translate(100, 0)">
-          <line x1="0" y1="${originY}" x2="0" y2="${floorY}" stroke="#38bdf8" stroke-width="2" marker-start="url(#mArrow)" marker-end="url(#mArrow)" />
-          <line x1="-15" y1="${originY}" x2="115" y2="${originY}" stroke="#475569" stroke-width="0.8" />
-          <line x1="-15" y1="${floorY}" x2="115" y2="${floorY}" stroke="#475569" stroke-width="0.8" />
+          <line x1="0" y1="${originY}" x2="0" y2="${floorY}" stroke="#38bdf8" stroke-width="2" marker-start="url(#mArrowSky)" marker-end="url(#mArrowSky)" />
+          <line x1="-15" y1="${originY}" x2="115" y2="${originY}" stroke="#404040" stroke-width="0.8" />
+          <line x1="-15" y1="${floorY}" x2="115" y2="${floorY}" stroke="#404040" stroke-width="0.8" />
           <text x="-12" y="${originY + H_px/2}" fill="#38bdf8" font-size="14" font-weight="bold" transform="rotate(-90 -12 ${originY + H_px/2})" text-anchor="middle">
             TOTALHÖJD: ${state.totalHeight} cm
           </text>
         </g>
 
         <g transform="translate(155, 0)">
-          <line x1="0" y1="${originY}" x2="0" y2="${topBottomY}" stroke="#818cf8" stroke-width="1.5" marker-start="url(#mArrow)" marker-end="url(#mArrow)" />
+          <line x1="0" y1="${originY}" x2="0" y2="${topBottomY}" stroke="#818cf8" stroke-width="1.5" marker-start="url(#mArrowIndigo)" marker-end="url(#mArrowIndigo)" />
           <text x="-10" y="${originY + topH_px/2}" fill="#818cf8" font-size="11" font-weight="bold" transform="rotate(-90 -10 ${originY + topH_px/2})" text-anchor="middle">
             Topp: ${state.topHeight} cm
           </text>
@@ -1756,9 +1778,9 @@
         </g>
 
         <g transform="translate(0, 65)">
-          <line x1="${originX}" y1="0" x2="${originX + W_px}" y2="0" stroke="#38bdf8" stroke-width="1.8" marker-start="url(#mArrow)" marker-end="url(#mArrow)" />
-          <line x1="${originX}" y1="-10" x2="${originX}" y2="50" stroke="#475569" stroke-width="0.8" />
-          <line x1="${originX + W_px}" y1="-10" x2="${originX + W_px}" y2="50" stroke="#475569" stroke-width="0.8" />
+          <line x1="${originX}" y1="0" x2="${originX + W_px}" y2="0" stroke="#38bdf8" stroke-width="1.8" marker-start="url(#mArrowSky)" marker-end="url(#mArrowSky)" />
+          <line x1="${originX}" y1="-10" x2="${originX}" y2="50" stroke="#404040" stroke-width="0.8" />
+          <line x1="${originX + W_px}" y1="-10" x2="${originX + W_px}" y2="50" stroke="#404040" stroke-width="0.8" />
           <text x="${originX + W_px/2}" y="-8" fill="#38bdf8" font-size="13" font-weight="bold" text-anchor="middle">
             TOTALBREDD TAK: ${state.totalWidth} cm
           </text>
@@ -1775,8 +1797,8 @@
             ${state.towerWidth} cm
           </text>
 
-          <line x1="${originX}" y1="30" x2="${originX + W_px}" y2="30" stroke="#f59e0b" stroke-width="1.5" marker-start="url(#mArrowAmber)" marker-end="url(#mArrowAmber)" />
-          <text x="${originX + W_px/2}" y="46" fill="#f59e0b" font-size="10.5" font-weight="bold" text-anchor="middle">
+          <line x1="${originX}" y1="30" x2="${originX + W_px}" y2="30" stroke="#fbbf24" stroke-width="1.5" marker-start="url(#mArrowAmber)" marker-end="url(#mArrowAmber)" />
+          <text x="${originX + W_px/2}" y="46" fill="#fbbf24" font-size="10.5" font-weight="bold" text-anchor="middle">
             GOLV MELLAN LISTER: ${state.floorWidth} cm
           </text>
         </g>
@@ -1784,7 +1806,7 @@
     }
 
     // ==========================================
-    // 6. DYNAMISK KAPLISTA (HTML-TABELL)
+    // 6. ELFA KOMPONENT- & KAPLISTA (FÄRG PÅ MÅTTVÄRDEN)
     // ==========================================
     function renderCutListTable() {
       const tbody = document.getElementById('cutListTableBody');
@@ -1800,15 +1822,47 @@
 
       const rows = [
         {
-          name: `Hatthyllor (${state.numTopShelves} st)`,
+          name: 'Elfa Bärlist 1350 mm',
+          w: 1350,
+          h: 47,
+          d: 10,
+          qty: 1,
+          note: 'Elfa art.nr 421310. Monteras i tak/vägg i överkant. Bär upp hela inredningen.'
+        },
+        {
+          name: 'Elfa Hängskenor 2300 mm',
+          w: 25,
+          h: 2300,
+          d: 23,
+          qty: 3,
+          note: 'Elfa art.nr 426510. Hakas i bärlisten (vänster, skiljevägg och höger).'
+        },
+        {
+          name: 'Elfa Klädstång & Stånghållare',
+          w: mainW_mm - 16,
+          h: 'Ø25',
+          d: 40,
+          qty: 1,
+          note: 'Elfa art.nr 620903 / 470910. Kromat stålrör kapas till 1104 mm med fästen.'
+        },
+        {
+          name: 'Elfa Kroklist för vägg/skena',
+          w: mainW_mm,
+          h: 45,
+          d: 40,
+          qty: 1,
+          note: 'Elfa art.nr 472410. Utrustad med 6 st robusta jackkrokar i metall.'
+        },
+        {
+          name: `Elfa Hatthyllplan (${state.numTopShelves} st)`,
           w: mainW_mm,
           h: 18,
           d: inD_mm,
           qty: state.numTopShelves,
-          note: `Topphyllplan. Fackhöjd: ${state.topSlotHeight * 10} mm.`
+          note: `Elfa Klick-in Melamin/Trådhylla kapad till 1120 mm på Elfa konsol 420/500 mm.`
         },
         {
-          name: 'Vertikal Skiljevägg',
+          name: 'Elfa Vertikal Skiljevägg',
           w: inD_mm,
           h: hangH_mm,
           d: 18,
@@ -1816,84 +1870,71 @@
           note: `Delar hängdel (${state.mainWidth} cm) och skotorn (${state.towerWidth} cm).`
         },
         {
-          name: 'Kroklist (Melaminlist med hängkrokar)',
-          w: mainW_mm,
-          h: 55,
-          d: 18,
-          qty: 1,
-          note: 'Monterad under lägsta hatthyllan med 6 st robusta metallkrokar.'
-        },
-        {
-          name: 'Klädstång för galgar (Ø25 mm stål)',
-          w: mainW_mm - 16,
-          h: 'Ø25',
-          d: '-',
-          qty: 1,
-          note: `Kromat stålrör inklusive 2 st ändfästen för klädgalgar.`
-        },
-        {
-          name: `Skotorn Hyllplan (Höger)`,
+          name: `Elfa Skotorn Hyllplan (Höger)`,
           w: towerW_mm,
           h: 18,
           d: inD_mm,
           qty: state.numTowerShelves,
-          note: `${state.numTowerShelves} hyllplan. Fackhöjd: ca ${Math.round(state.towerSlotHeight * 10)} mm.`
+          note: `Elfa Klick-in hyllor kapade till 230 mm för smalfack. Fackhöjd: ca ${Math.round(state.towerSlotHeight * 10)} mm.`
         },
         {
-          name: `Skohyllor (Botten)`,
+          name: `Elfa Skohyllplan (Botten)`,
           w: floorW_mm,
           h: 18,
           d: inD_mm,
           qty: state.numShoeShelves,
-          note: `Monteras direkt mot nischväggar utan underliggande sockel.`
+          note: `Elfa Klick-in Skohylla / Hyllplan 1330 mm monterade direkt mot underlag.`
         },
         {
-          name: 'Spegelskjutdörrar (Paket)',
+          name: 'Elfa Måttanpassade Spegeldörrar',
           w: doorW_mm,
           h: doorH_mm,
-          d: 24,
+          d: 32,
           qty: 2,
-          note: 'Topphängt system med spegelglas & integrerat handtag.'
+          note: 'Elfa Vista / Linear måttbeställda spegeldörrar med toppskena utan sockel.'
         }
       ];
 
       tbody.innerHTML = rows.map(r => `
-        <tr class="hover:bg-slate-800/40">
+        <tr class="hover:bg-neutral-800/40">
           <td class="p-3 font-sans font-medium text-white">${r.name}</td>
+          <!-- Endast måttvärden har färg -->
           <td class="p-3 text-indigo-400 font-bold">${r.w}</td>
-          <td class="p-3 text-slate-400">${r.h}</td>
-          <td class="p-3 text-sky-400">${r.d}</td>
-          <td class="p-3 font-bold">${r.qty}</td>
-          <td class="p-3 font-sans text-xs text-slate-300">${r.note}</td>
+          <td class="p-3 text-sky-400">${r.h}</td>
+          <td class="p-3 text-emerald-400">${r.d}</td>
+          <td class="p-3 text-amber-400 font-bold">${r.qty}</td>
+          <td class="p-3 font-sans text-xs text-neutral-400">${r.note}</td>
         </tr>
       `).join('');
     }
 
     // ==========================================
-    // 7. DYNAMISK PDF-EXPORT (JSPDF)
+    // 7. DYNAMISK PDF-EXPORT (GRÅSKALA MED FÄRGADE MÅTTVÄRDEN)
     // ==========================================
     document.getElementById('downloadPdfBtn').addEventListener('click', () => {
       try {
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
 
-        doc.setFillColor(15, 23, 42);
+        // Gråskala bakgrund
+        doc.setFillColor(23, 23, 23);
         doc.rect(0, 0, 210, 297, 'F');
 
-        doc.setDrawColor(51, 65, 85);
+        doc.setDrawColor(64, 64, 64);
         doc.setLineWidth(0.8);
         doc.rect(8, 8, 194, 281);
 
-        doc.setTextColor(248, 250, 252);
+        doc.setTextColor(255, 255, 255);
         doc.setFont('helvetica', 'bold');
         doc.setFontSize(15);
-        doc.text('BYGGRITNING: PLATSB الأهGGAD NISCHGARDEROB', 14, 18);
+        doc.text('BYGGRITNING: PLATSB الأهGGAD ELFA NISCHGARDEROB', 14, 18);
 
         doc.setFontSize(8.5);
         doc.setFont('helvetica', 'normal');
-        doc.setTextColor(148, 163, 184);
-        doc.text('Dynamiska sektionsmått (Bredd × Höjd × Djup) | Direkt mot golv utan sockel', 14, 24);
+        doc.setTextColor(163, 163, 163);
+        doc.text('Elfa Modulsystem (Bredd × Höjd × Djup) | Direkt mot golv utan sockel', 14, 24);
 
+        // Färgade måttbrickor i PDF
         const cards = [
           { l: 'TOTALHÖJD', v: `${state.totalHeight * 10} mm`, c: [56, 189, 248] },
           { l: 'BREDD TAK', v: `${state.totalWidth * 10} mm`, c: [251, 191, 36] },
@@ -1903,14 +1944,14 @@
 
         cards.forEach((card, i) => {
           const cx = 14 + (i * 46);
-          doc.setFillColor(30, 41, 59);
+          doc.setFillColor(38, 38, 38);
           doc.roundedRect(cx, 28, 42, 14, 1.5, 1.5, 'F');
           doc.setFontSize(7);
-          doc.setTextColor(148, 163, 184);
+          doc.setTextColor(163, 163, 163);
           doc.text(card.l, cx + 4, 33);
           doc.setFont('helvetica', 'bold');
           doc.setFontSize(10);
-          doc.setTextColor(card.c[0], card.c[1], card.c[2]);
+          doc.setTextColor(card.c[0], card.c[1], card.c[2]); // Färgat måttvärde
           doc.text(card.v, cx + 4, 39);
         });
 
@@ -1919,7 +1960,7 @@
         const gw = 88;
         const gh = 158;
 
-        doc.setDrawColor(148, 163, 184);
+        doc.setDrawColor(115, 115, 115);
         doc.setLineWidth(0.6);
         doc.rect(gx, gy, gw, gh);
 
@@ -1932,7 +1973,7 @@
         const botH_pdf = gh * (state.bottomHeight / state.totalHeight);
         const hangH_pdf = gh * (state.hangingHeight / state.totalHeight);
 
-        doc.setDrawColor(100, 116, 139);
+        doc.setDrawColor(82, 82, 82);
         doc.setLineWidth(0.5);
         doc.line(divX_mm, gy + topH_pdf, divX_mm, gy + gh - botH_pdf);
 
@@ -1943,7 +1984,7 @@
           doc.line(gx, sy, divX_mm, sy);
         }
 
-        doc.setDrawColor(248, 250, 252);
+        doc.setDrawColor(245, 245, 245);
         doc.setLineWidth(0.8);
         doc.line(gx + 3, gy + topH_pdf + 6, divX_mm - 3, gy + topH_pdf + 6);
 
@@ -1962,6 +2003,7 @@
           doc.line(divX_mm, sy, gx + gw, sy);
         }
 
+        // Färgade måttvärden på ritningen
         doc.setFontSize(6);
         doc.setFont('helvetica', 'bold');
         
@@ -1980,27 +2022,27 @@
         const rx = 118;
         doc.setFontSize(9.5);
         doc.setFont('helvetica', 'bold');
-        doc.setTextColor(248, 250, 252);
-        doc.text('KALKYLERADE SEKTIONSMÅTT (B x H x D)', rx, 52);
+        doc.setTextColor(255, 255, 255);
+        doc.text('ELFA KOMPONENTSPECIFIKATION', rx, 52);
 
         doc.setFontSize(7.5);
         doc.setFont('helvetica', 'normal');
-        doc.setTextColor(203, 213, 225);
+        doc.setTextColor(212, 212, 212);
 
         const specs = [
-          `1. TOPPSEKTION (Hatthyllor):`,
-          `   • B: ${state.mainWidth * 10} mm × H: ${Math.round(state.topSlotHeight * 10)} mm × D: ${state.innerDepth * 10} mm (${state.numTopShelves} st).`,
-          `2. KLADHANGDEL (Krokar + Galgstang):`,
+          `1. ELFA BÄRLIST & HÄNGSKENOR:`,
+          `   • Elfa Bärlist 1350 mm (art. 421310). Monteras i tak/överkant.`,
+          `   • 3 st Elfa Hängskenor 2300 mm (art. 426510).`,
+          `2. KLÄDHÄNGDEL (Krokar + Klädstång):`,
           `   • B: ${state.mainWidth * 10} mm × H: ${state.hangingHeight * 10} mm × D: ${state.innerDepth * 10} mm.`,
-          `   • 6 st robusta hangkrokar monterade pa kroklist.`,
-          `   • Stalstang O25 mm for kladgalgar med andfasten.`,
-          `3. HOGER SKOTORN (Smalfack):`,
+          `   • Elfa Klädstång Ø25 mm kapad till ${state.mainWidth * 10 - 16} mm + ändhållare.`,
+          `   • Elfa Kroklist med 6 st metallkrokar för jackor.`,
+          `3. ELFA HÖGER SKOTORN:`,
           `   • B: ${state.towerWidth * 10} mm × H: ${state.hangingHeight * 10} mm × D: ${state.innerDepth * 10} mm (${state.numTowerShelves} hyllor).`,
-          `4. BOTTENSEKTION (Skoforvaring):`,
+          `4. ELFA BOTTENSEKTION (Skoförvaring):`,
           `   • B: ${state.floorWidth * 10} mm × H: ${state.bottomHeight * 10} mm × D: ${state.innerDepth * 10} mm (${state.numShoeShelves} plan).`,
-          `5. SPEGELSKJUTDORRAR & GOLV:`,
-          `   • Topphangda spegeldorrar direkt mot golv utan sockel.`,
-          `   • Reflekterande spegelglas med silverprofiler.`
+          `5. ELFA SPEGELSKJUTDÖRRAR:`,
+          `   • Topphängda spegeldörrar måttbeställda för B 1350 x H 2500 mm.`
         ];
 
         let sy = 59;
@@ -2011,51 +2053,59 @@
 
         doc.setFontSize(9.5);
         doc.setFont('helvetica', 'bold');
-        doc.setTextColor(248, 250, 252);
-        doc.text('KAPLISTA & MATERIALSPECIFIKATION (18 mm Vit Melamin)', 14, 214);
+        doc.setTextColor(255, 255, 255);
+        doc.text('KOMPONENT- & MATERIALSPECIFIKATION (ELFA SYSTEM)', 14, 214);
 
-        doc.setFillColor(30, 41, 59);
+        doc.setFillColor(38, 38, 38);
         doc.rect(14, 217, 182, 6, 'F');
         doc.setFontSize(6.5);
-        doc.setTextColor(148, 163, 184);
-        doc.text('SEKTION / KOMPONENT', 18, 221);
+        doc.setTextColor(163, 163, 163);
+        doc.text('KOMPONENT', 18, 221);
         doc.text('BREDD (mm)', 75, 221);
-        doc.text('HOJD (mm)', 105, 221);
+        doc.text('HÖJD (mm)', 105, 221);
         doc.text('DJUP (mm)', 132, 221);
         doc.text('ANTAL', 158, 221);
-        doc.text('NOTERING', 172, 221);
+        doc.text('ELFA SPECIFIKATION', 172, 221);
 
         const pdfRows = [
-          [`Hatthyllor (${state.numTopShelves} st)`, `${state.mainWidth * 10}`, '18', `${state.innerDepth * 10}`, `${state.numTopShelves} st`, `Fackhojd ${state.topSlotHeight * 10} mm`],
-          ['Vertikal Skiljevagg', `${state.innerDepth * 10}`, `${state.hangingHeight * 10}`, '18', '1 st', `Mellan handdel & torn`],
-          ['Kroklist (Melaminlist)', `${state.mainWidth * 10}`, '55', '18', '1 st', '6 st jackkrokar i metall'],
-          ['Kladstang for galgar', `${state.mainWidth * 10 - 16}`, 'O25', '-', '1 st', 'Kromat stalror + fasten'],
-          [`Skotorn Hyllplan`, `${state.towerWidth * 10}`, '18', `${state.innerDepth * 10}`, `${state.numTowerShelves} st`, `Fackhojd ~${Math.round(state.towerSlotHeight * 10)} mm`],
-          [`Skohyllor (Botten)`, `${state.floorWidth * 10}`, '18', `${state.innerDepth * 10}`, `${state.numShoeShelves} st`, `Direkt mot rumsunderlag`],
-          ['Spegelskjutdorrar', `${Math.round((state.totalWidth / 2 + 3.5) * 10)}`, `${(state.totalHeight - 3.5) * 10}`, '24', '2 st', 'Topphangt system']
+          ['Elfa Bärlist', '1350', '47', '10', '1 st', 'Art. 421310 (Vägg/takfäste)'],
+          ['Elfa Hängskenor', '25', '2300', '23', '3 st', 'Art. 426510 (Hakas i list)'],
+          ['Elfa Klädstång O25', `${state.mainWidth * 10 - 16}`, 'O25', '40', '1 st', 'Kromat rör + ändfästen'],
+          ['Elfa Kroklist', `${state.mainWidth * 10}`, '45', '40', '1 st', '6 st jackkrokar'],
+          [`Elfa Hatthyllor`, `${state.mainWidth * 10}`, '18', `${state.innerDepth * 10}`, `${state.numTopShelves} st`, `Klick-in konsoler 420mm`],
+          ['Vertikal Skiljevägg', `${state.innerDepth * 10}`, `${state.hangingHeight * 10}`, '18', '1 st', 'Mellan hängdel & torn'],
+          [`Elfa Skotorn Hyllor`, `${state.towerWidth * 10}`, '18', `${state.innerDepth * 10}`, `${state.numTowerShelves} st`, `Fackhöjd ~${Math.round(state.towerSlotHeight * 10)} mm`],
+          [`Elfa Skohyllor`, `${state.floorWidth * 10}`, '18', `${state.innerDepth * 10}`, `${state.numShoeShelves} st`, 'Direkt mot golvunderlag'],
+          ['Elfa Spegeldörrar', `${Math.round((state.totalWidth / 2 + 3.5) * 10)}`, `${(state.totalHeight - 3.5) * 10}`, '32', '2 st', 'Måttanpassade speglar']
         ];
 
         let rY = 227;
-        doc.setTextColor(226, 232, 240);
         pdfRows.forEach((r, idx) => {
           if (idx % 2 === 1) {
-            doc.setFillColor(24, 33, 47);
+            doc.setFillColor(30, 30, 30);
             doc.rect(14, rY - 3.2, 182, 4.8, 'F');
           }
+          doc.setTextColor(245, 245, 245);
           doc.text(r[0], 18, rY);
+          // Färgade måttvärden i tabellen
+          doc.setTextColor(129, 140, 248);
           doc.text(r[1], 77, rY);
+          doc.setTextColor(56, 189, 248);
           doc.text(r[2], 107, rY);
+          doc.setTextColor(52, 211, 153);
           doc.text(r[3], 134, rY);
+          doc.setTextColor(251, 191, 36);
           doc.text(r[4], 160, rY);
+          doc.setTextColor(163, 163, 163);
           doc.text(r[5], 172, rY);
           rY += 4.8;
         });
 
         doc.setFontSize(6.5);
-        doc.setTextColor(100, 116, 139);
-        doc.text('Skapad av Jonas Lund 2026 | Platsbyggd Nischgarderob | Alla matt i mm om inget annat anges', 14, 285);
+        doc.setTextColor(115, 115, 115);
+        doc.text('Skapad av Jonas Lund 2026 | Platsbyggd Nischgarderob (Elfa Kompatibel)', 14, 285);
 
-        doc.save(`Garderob_Platsbyggd_${state.totalWidth}x${state.totalHeight}cm.pdf`);
+        doc.save(`Garderob_Elfa_${state.totalWidth}x${state.totalHeight}cm.pdf`);
         showToast('PDF-ritning nedladdad!', 'fa-file-arrow-down');
       } catch (err) {
         console.error(err);
